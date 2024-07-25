@@ -1,9 +1,10 @@
 # PPkNN
+This repo is the code for the paper "PPkNN: Privacy-Preserving k-Nearest Neighbor Query with Provable Security"
 
 ## Requirements
 * JDK-17
 
-## How to run
+## Get Started
 For ease of testing, we have combined the code for the user end and two servers into one project. During testing, select a role before running the program. Additionally, to deploy the code on different computers, it is necessary to modify the corresponding IP parameters. All parameter configurations can be completed in the main function of the TestSKNNV2.java, and then you can run the TestSKNNV2.java.
 
 * Parameter setting
