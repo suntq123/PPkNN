@@ -1,5 +1,5 @@
 # PPkNN
-This repo is the code for the paper "PPkNN: Privacy-Preserving k-Nearest Neighbor Query with Provable Security"
+This repo is the code for the paper "PPkNN: Privacy-Preserving k-Nearest Neighbor Query with Provable Security".
 
 ## Requirements
 * JDK-17
