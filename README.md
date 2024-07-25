@@ -11,6 +11,6 @@ For ease of testing, we have combined the code for the user end and two servers 
     * testType: 0-BPPkNN  2-VPPkNN
     * datasetType: 0-Synthetic dataset  1-Real world dataset
     * N: dataset size
-    * dataLength: the bit length of a numerical values
+    * dataLength: the bit length of numerical values
     * dimension: dimension of data
     * k: k in kNN
