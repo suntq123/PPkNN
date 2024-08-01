@@ -20,24 +20,30 @@ Before running the program, import the project into C1 and C2. All parameter con
 
 ## Query Processing
 * Computer C1
-    * C1 selects the role "c1" by modifying the code in the main function of /src/main/java/cn/ac/iscas/TestSKNNV2.java as follows:
-        //select a role
-        args = c1.split(" ");
-        //args = c2.split(" ");
+    * C1 selects the role "c1" by modifying the code in the main function of /src/main/java/cn/ac/iscas/TestSKNNV2.java as follows:  
+        ```
+        //select a role  
+        args = c1.split(" ");  
+        //args = c2.split(" ");  
         //args = user.split(" ");
+        ```  
     * C1 runs the TestSKNNV2.java.
 * Computer C2
-    * C2 selects the role "c2" by modifying the code in the main function of /src/main/java/cn/ac/iscas/TestSKNNV2.java as follows:
-        //select a role
-        //args = c1.split(" ");
-        args = c2.split(" ");
-        //args = user.split(" ");
+    * C2 selects the role "c2" by modifying the code in the main function of /src/main/java/cn/ac/iscas/TestSKNNV2.java as follows:  
+        ```
+        //select a role  
+        //args = c1.split(" ");  
+        args = c2.split(" ");  
+        //args = user.split(" ");  
+        ```
     * C2 runs the TestSKNNV2.java.
 * Computer C1
-    * C1 selects the role "user" by modifying the code in the main function of /src/main/java/cn/ac/iscas/TestSKNNV2.java as follows:
-        //select a role
-        //args = c1.split(" ");
-        //args = c2.split(" ");
-        args = user.split(" ");
+    * C1 selects the role "user" by modifying the code in the main function of /src/main/java/cn/ac/iscas/TestSKNNV2.java as follows: 
+        ``` 
+        //select a role  
+        //args = c1.split(" ");  
+        //args = c2.split(" ");  
+        args = user.split(" ");  
+        ```
     * C1 runs the TestSKNNV2.java.
 
