@@ -1613,7 +1613,7 @@ public class Paillier {
         int m = epList[0].length;
         BigInteger[][] result = new BigInteger[k][m];
         for (int i = 0; i < k; i++) {
-            result[i] = secureMinDistancePointC1(epList, edList, dataLength + 1, publicKey, reader, writer); // 由于添加了最大值，所以在SBD时，需要把dataLength+1
+            result[i] = secureMinDistancePointC1(epList, edList, dataLength + 1, publicKey, reader, writer); 
             // System.out.println("secureMinDistancePointC1: " + timer.cut() + " ms");
 
             if (i == k - 1)
@@ -1691,7 +1691,7 @@ public class Paillier {
 
         BigInteger[] result = new BigInteger[1];
         for (int i = 0; i < k; i++) {
-            result = secureMinDistancePointC1(epList, exs, dataLength + 1, publicKey, reader, writer); // 本轮的p_min
+            result = secureMinDistancePointC1(epList, exs, dataLength + 1, publicKey, reader, writer); 
 
             if (i == k - 1)
                 break;
@@ -1832,7 +1832,7 @@ public class Paillier {
                 BigInteger[][] eBucket = new BigInteger[bSize][m];
                 for (int j = 0; j < bSize; j++) {
                     for (int k = 0; k < m; k++) {
-                        eBucket[j][k] = reEncrypt(publicKey, teBuckets[i][j][k]); // 重加密
+                        eBucket[j][k] = reEncrypt(publicKey, teBuckets[i][j][k]); 
                     }
                 }
 
@@ -2362,7 +2362,7 @@ public class Paillier {
         BigInteger[] eAlphas = securePointEnclosureSC1(eqBDs, elbBDs, eubBDs, publicKey, reader, writer);
         System.out.println("SPE: " + timer.cut() + " ms");
 
-        BigInteger[][] eBPoints = secureReadC1(eBuckets, eAlphas, publicKey, reader, writer); // 此处不可能为null
+        BigInteger[][] eBPoints = secureReadC1(eBuckets, eAlphas, publicKey, reader, writer);  
         System.out.println("First SREAD: " + timer.cut() + " ms");
 
         Util.writeInt(eBPoints.length, writer);
@@ -2414,7 +2414,7 @@ public class Paillier {
         System.out.println("XOR: " + timer.cut() + " ms");
 
         // SRead
-        BigInteger[][] eNPoints = secureReadC1(eBuckets, eBetas, publicKey, reader, writer); // 此处有可能为null
+        BigInteger[][] eNPoints = secureReadC1(eBuckets, eBetas, publicKey, reader, writer); 
         System.out.println("Second SREAD: " + timer.cut() + " ms");
 
         BigInteger[][] eAllPoints;

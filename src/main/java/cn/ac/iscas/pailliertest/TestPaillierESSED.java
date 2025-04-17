@@ -224,9 +224,9 @@ public class TestPaillierESSED {
     public static void main(String[] args) throws IOException {
         // System.out.println(args[0]);
 
-        // // sigma = dataLength + secureParameter， 本实验中secureParameter = 40
-        // // 要求 sigma * m < bitLength
-        // // 即 (40 + dataLength) * m < bitLength
+        // // sigma = dataLength + secureParameter， secureParameter = 40
+        // //  sigma * m < bitLength
+        // //  (40 + dataLength) * m < bitLength
 
         // String c1 = "c1 8001";
         // String c2 = "c2 127.0.0.1 8001 8002";

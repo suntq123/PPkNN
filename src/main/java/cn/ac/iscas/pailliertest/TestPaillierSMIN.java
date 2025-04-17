@@ -33,8 +33,8 @@ public class TestPaillierSMIN {
         int testNumber = Integer.parseInt(args[index++]);
         int bitLength = Integer.parseInt(args[index++]);
         int dataLength = Integer.parseInt(args[index++]);
-        int num = Integer.parseInt(args[index++]); // 点的数量
-        int m = Integer.parseInt(args[index++]); // 点的维度
+        int num = Integer.parseInt(args[index++]);  
+        int m = Integer.parseInt(args[index++]);  
 
         try (Socket socketC1 = new Socket(ipC1, portC1); Socket socketC2 = new Socket(ipC2, portC2);) {
             PrintWriter writerC1 = new PrintWriter(socketC1.getOutputStream());
@@ -43,7 +43,7 @@ public class TestPaillierSMIN {
             PrintWriter writerC2 = new PrintWriter(socketC2.getOutputStream());
             BufferedReader readerC2 = new BufferedReader(new InputStreamReader(socketC2.getInputStream()));
 
-            /* 计算过程 */
+            /*   */
             Util.writeInt(testNumber, writerC1);
             Util.writeInt(testNumber, writerC2);
 

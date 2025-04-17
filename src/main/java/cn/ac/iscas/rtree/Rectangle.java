@@ -326,7 +326,7 @@ public class Rectangle implements Cloneable
     //     Rectangle re1 = new Rectangle(p1, p2);
     //     Rectangle re2 = new Rectangle(p3, p4);
     //     Rectangle re3 = new Rectangle(p5, p6);
-    //     // Rectangle re4 = new Rectangle(p3, p4); //输入要先左下角，再右上角
+    //     // Rectangle re4 = new Rectangle(p3, p4);
 
     //     System.out.println(re1.isIntersection(re2));
     //     System.out.println(re1.isIntersection(re3));

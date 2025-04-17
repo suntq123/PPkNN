@@ -110,7 +110,7 @@ public class SecureKNNDataUser {
             lbData[i] = BigInteger.valueOf(0);
             ubData[i] = BigInteger.TWO.pow(bitLength).subtract(BigInteger.ONE);
         }
-        KDTreeNode kdTree = new KDTreeNode(dataNodeCapacity, dimension, points, null, lbData, ubData); // 请保证最后叶子节点的数据点数量一致
+        KDTreeNode kdTree = new KDTreeNode(dataNodeCapacity, dimension, points, null, lbData, ubData); 
         List<KDTreeNode> leafNodes = KDTreeNode.getAllLeafPoints(kdTree);
         System.out.println("bucket number: " + leafNodes.size());
 

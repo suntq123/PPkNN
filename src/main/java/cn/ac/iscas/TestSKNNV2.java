@@ -585,7 +585,7 @@ public class TestSKNNV2 {
     public static void main(String[] args) throws IOException {
         JSON.config(JSONWriter.Feature.LargeObject, true);
 
-        System.out.println("args: " + Arrays.asList(args)); // args不是null，其长度为0。
+        System.out.println("args: " + Arrays.asList(args));
 
         /*
         * test type:   0-Linear SKNN   1-Voronoi SKNN for debug  2-Voronoi SKNN for test

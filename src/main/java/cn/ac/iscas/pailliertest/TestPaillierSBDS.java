@@ -42,7 +42,7 @@ public class TestPaillierSBDS {
             PrintWriter writerC2 = new PrintWriter(socketC2.getOutputStream());
             BufferedReader readerC2 = new BufferedReader(new InputStreamReader(socketC2.getInputStream()));
 
-            /* 计算过程 */
+            /*   */
             Util.writeInt(testNumber, writerC1);
             Util.writeInt(testNumber, writerC2);
 

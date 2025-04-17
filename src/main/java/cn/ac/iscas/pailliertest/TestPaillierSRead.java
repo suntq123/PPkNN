@@ -36,9 +36,9 @@ public class TestPaillierSRead {
         int bitLength = Integer.parseInt(args[index++]);
         int dataLength = Integer.parseInt(args[index++]);
 
-        int bNum = Integer.parseInt(args[index++]); // 桶的数量
-        int bSize = Integer.parseInt(args[index++]); // 桶的大小
-        int m = Integer.parseInt(args[index++]); // 维度
+        int bNum = Integer.parseInt(args[index++]); 
+        int bSize = Integer.parseInt(args[index++]); 
+        int m = Integer.parseInt(args[index++]); 
 
         try (Socket socketC1 = new Socket(ipC1, portC1); Socket socketC2 = new Socket(ipC2, portC2);) {
             PrintWriter writerC1 = new PrintWriter(socketC1.getOutputStream());

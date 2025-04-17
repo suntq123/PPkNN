@@ -121,7 +121,7 @@ public class AdditiveSecretSharing {
         }
 
         long alpha = Util.modOperation(r, twoPowS); // r % twoPowS;
-        long[] alphaBinary = Util.decimalToBinary(alpha, s); // LGB在数组低位，LSB在数组高位
+        long[] alphaBinary = Util.decimalToBinary(alpha, s); 
 
         long u = Util.modOperation(Math.floorDiv(r, twoPowS), 2L); // Math.floorDiv(r, twoPowS) % 2;
         long v = Util.modOperation(Math.floorDiv(r - mod, twoPowS), 2L); // Math.floorDiv(r - mod, twoPowS) % 2;
@@ -274,7 +274,7 @@ public class AdditiveSecretSharing {
         BigInteger f = add(fi, t[1], mod);
 
         BigInteger x;
-        if (partyID == PartyID.C1) // C_1计算： [z]_1 = f * [a]_1 + e * [b]_1 + [c]_1
+        if (partyID == PartyID.C1) // C_1 ： [z]_1 = f * [a]_1 + e * [b]_1 + [c]_1
             // x = f * triple.ai + e * triple.bi + triple.ci;
             x = f.multiply(triple.ai).add(e.multiply(triple.bi)).add(triple.ci);
         else
@@ -293,7 +293,7 @@ public class AdditiveSecretSharing {
         // long f = Util.modOperation(fi + Util.readLong(reader), mod.longValue()); // add(fi, t[1], mod);
 
         // long x;
-        // if (partyID == PartyID.C1) // C_1计算： [z]_1 = f * [a]_1 + e * [b]_1 + [c]_1
+        // if (partyID == PartyID.C1) // C_1 ： [z]_1 = f * [a]_1 + e * [b]_1 + [c]_1
         //     // x = f * triple.ai + e * triple.bi + triple.ci;
         //     x = f * triple.ai.longValue() + e * triple.bi.longValue() + triple.ci.longValue();
         // else
@@ -314,7 +314,7 @@ public class AdditiveSecretSharing {
             efis[i + num] = subtract(yis[i], triple.bi, mod);
         }
 
-        // Util.writeBigIntegers(efis, writer);        // 当数量太大，会卡住，估计是因为传输太多，爆栈？
+        // Util.writeBigIntegers(efis, writer);
         // BigInteger[] ts = Util.readBigIntegers(num * 2, reader);
         BigInteger[] ts = Util.exchangeBigIntegers(efis, reader, writer);
 
@@ -324,7 +324,7 @@ public class AdditiveSecretSharing {
             BigInteger f = add(efis[i + num], ts[i + num], mod);
 
             BigInteger x;
-            if (partyID == PartyID.C1) // C_1计算： [z]_1 = f * [a]_1 + e * [b]_1 + [c]_1
+            if (partyID == PartyID.C1) // C_1 ： [z]_1 = f * [a]_1 + e * [b]_1 + [c]_1
                 // x = f * triple.ai + e * triple.bi + triple.ci;
                 x = f.multiply(triple.ai).add(e.multiply(triple.bi)).add(triple.ci);
             else
@@ -792,7 +792,7 @@ public class AdditiveSecretSharing {
         // open/recover c
         BigInteger c = recover(partyID, ci, mod, reader, writer);
 
-        // <alpha> = <c0 XOR r0>。当c0 = 0，<alpha> = <r0>；当c0 = 1, <alpha> = 1 - <r0>。
+        // <alpha> = <c0 XOR r0> c0 = 0，<alpha> = <r0>; c0 = 1, <alpha> = 1 - <r0>
         BigInteger c0 = c.mod(BigInteger.TWO);
         BigInteger alphai = (c0.equals(BigInteger.ZERO)) ? rTuple.rBinary[0]
                 : shareConstant(partyID, BigInteger.ONE).subtract(rTuple.rBinary[0]);

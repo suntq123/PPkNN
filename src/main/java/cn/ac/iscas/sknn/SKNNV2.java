@@ -337,7 +337,7 @@ public class SKNNV2 {
             pDatas[i] = vgs[i].points;
         }
 
-        Point[] pointis = new Point[vgSize]; // 候选点集
+        Point[] pointis = new Point[vgSize];
         BigInteger[] labelis = new BigInteger[vgSize];
         getSelectedData(partyID, pointis, labelis, vgNum, vgSize, m, alphais, pDatas, lDatas,
                 triple, mod, reader, writer);

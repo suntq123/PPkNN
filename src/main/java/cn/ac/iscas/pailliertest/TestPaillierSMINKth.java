@@ -35,8 +35,8 @@ public class TestPaillierSMINKth {
         int testNumber = Integer.parseInt(args[index++]);
         int bitLength = Integer.parseInt(args[index++]);
         int dataLength = Integer.parseInt(args[index++]);
-        int num = Integer.parseInt(args[index++]); // 点的数量
-        int k = Integer.parseInt(args[index++]); // 前k小
+        int num = Integer.parseInt(args[index++]); 
+        int k = Integer.parseInt(args[index++]); 
 
         Socket socketC1 = new Socket(ipC1, portC1);
         PrintWriter writerC1 = new PrintWriter(socketC1.getOutputStream());

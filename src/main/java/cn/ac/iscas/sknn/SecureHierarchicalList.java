@@ -175,7 +175,7 @@ public class SecureHierarchicalList {
         for (int i = 1; i < tree.size(); i++) {
             for (int j = x - 1; j < y; j++) {
 
-                int lowerLevel = i - 1; // 第i-1层
+                int lowerLevel = i - 1; 
                 int leftChild = 2 * j, rightChild = 2 * j + 1;
                 if (tree.get(lowerLevel).size() < 2 * (j + 1)) {
                     tree.get(lowerLevel).get(leftChild).alpha = shareConstant(partyID, BigInteger.ONE);

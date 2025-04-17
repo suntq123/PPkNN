@@ -49,9 +49,9 @@ public class TestPaillierSKNN {
         int dataNumber = Integer.parseInt(args[index++]);
         int dataLength = Integer.parseInt(args[index++]);
 
-        int bSize = Integer.parseInt(args[index++]); // 桶的大小
-        int m = Integer.parseInt(args[index++]); // 维度
-        int k = Integer.parseInt(args[index++]); // 检索数量
+        int bSize = Integer.parseInt(args[index++]);  
+        int m = Integer.parseInt(args[index++]);  
+        int k = Integer.parseInt(args[index++]); 
 
         Socket socketC1 = new Socket(ipC1, portC1);
         PrintWriter writerC1 = new PrintWriter(socketC1.getOutputStream());
@@ -105,7 +105,7 @@ public class TestPaillierSKNN {
             ubData[i] = BigInteger.TWO.pow(dataLength).subtract(BigInteger.ONE);
         }
 
-        KDTreeNode kdTree = new KDTreeNode(bSize, m, points, null, lbData, ubData); // 请保证最后叶子节点的数据点数量一致
+        KDTreeNode kdTree = new KDTreeNode(bSize, m, points, null, lbData, ubData);  
         List<KDTreeNode> leafNodes = KDTreeNode.getAllLeafPoints(kdTree);
 
         int bNum = leafNodes.size();

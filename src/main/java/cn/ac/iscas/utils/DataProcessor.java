@@ -29,7 +29,7 @@ public class DataProcessor {
         private Rectangle rectangle;
         private Point point;
 
-        // 在Rectangle中是Pointer/Label or 在point中是id
+        // 
         private BigInteger ptr;
 
         public Entry() {
@@ -147,10 +147,10 @@ public class DataProcessor {
         while (index < list.size()) {
             Node node = new Node(list.get(index).getNodeRectangle());
 
-            if (!list.get(index).isLeaf()) { // 不是叶子节点
+            if (!list.get(index).isLeaf()) {
                 for (int i = 0; i < list.get(index).getUsedSpace(); i++) {
                     list.add(((RTDirNode) list.get(index)).getChild(i));
-                    BigInteger label = BigInteger.valueOf(list.size() - 1); // 节点在list中的下标作为label
+                    BigInteger label = BigInteger.valueOf(list.size() - 1);
 
                     //                    Rectangle rectangle = ((RTDirNode) list.get(index)).getChild(i).getNodeRectangle();
                     Rectangle rectangle = list.get(index).getData()[i];
@@ -575,7 +575,7 @@ public class DataProcessor {
         while ((line = reader.readLine()) != null) {
             String[] lineSplit = line.split("\t");
 
-            int latitude = (int) (100000 * (Float.parseFloat(lineSplit[2]) + 90)); // 取到小数点第五位，精度到米
+            int latitude = (int) (100000 * (Float.parseFloat(lineSplit[2]) + 90));
             int longitude = (int) (100000 * (Float.parseFloat(lineSplit[3]) + 180));
             universalDataSet.add(new BigInteger[] { BigInteger.valueOf(latitude), BigInteger.valueOf(longitude),
                     new BigInteger(lineSplit[4]) });

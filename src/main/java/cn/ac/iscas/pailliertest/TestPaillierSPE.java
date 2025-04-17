@@ -33,7 +33,7 @@ public class TestPaillierSPE {
         int bitLength = Integer.parseInt(args[index++]);
         int dataLength = Integer.parseInt(args[index++]);
 
-        int m = Integer.parseInt(args[index++]); // 维度
+        int m = Integer.parseInt(args[index++]); 
 
         Socket socketC1 = new Socket(ipC1, portC1);
         PrintWriter writerC1 = new PrintWriter(socketC1.getOutputStream());
