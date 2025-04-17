@@ -25,7 +25,7 @@ public class TestPaillierSRead {
     * @throws IOException
     */
     public static void user(String[] args) throws IOException {
-        /* 提取测试数据 */
+        /*  */
         int index = 1;
         String ipC1 = args[index++];
         int portC1 = Integer.parseInt(args[index++]);
@@ -47,7 +47,7 @@ public class TestPaillierSRead {
             PrintWriter writerC2 = new PrintWriter(socketC2.getOutputStream());
             BufferedReader readerC2 = new BufferedReader(new InputStreamReader(socketC2.getInputStream()));
 
-            /* 计算过程 */
+            /*  */
             Util.writeInt(testNumber, writerC1);
             Util.writeInt(testNumber, writerC2);
 
@@ -155,7 +155,7 @@ public class TestPaillierSRead {
     * @throws IOException
     */
     public static void c1(String[] args) throws IOException {
-        /* 提取测试数据 */
+        /*  */
         int index = 1;
         int portC1 = Integer.parseInt(args[index++]);
 
@@ -169,7 +169,7 @@ public class TestPaillierSRead {
         PrintWriter writerC2 = new PrintWriter(socketC2.getOutputStream());
         BufferedReader readerC2 = new BufferedReader(new InputStreamReader(socketC2.getInputStream()));
 
-        /* 计算过程 */
+        /*  */
         int testNumber = Util.readInt(readerUser);
         PaillierPublicKey publicKey = Paillier.parseJsonToPublicKey(readerUser.readLine());
 
@@ -208,7 +208,7 @@ public class TestPaillierSRead {
     * @throws IOException
     */
     public static void c2(String[] args) throws IOException {
-        /* 提取测试数据 */
+        /*  */
         int index = 1;
         String ipC1 = args[index++];
         int portC1 = Integer.parseInt(args[index++]);
@@ -224,7 +224,7 @@ public class TestPaillierSRead {
         PrintWriter writerC1 = new PrintWriter(socketC1.getOutputStream());
         BufferedReader readerC1 = new BufferedReader(new InputStreamReader(socketC1.getInputStream()));
 
-        /* 计算过程 */
+        /*  */
         int testNumber = Util.readInt(readerUser);
         PaillierPrivateKey privateKey = Paillier.parseJsonToPrivateKey(readerUser.readLine());
 

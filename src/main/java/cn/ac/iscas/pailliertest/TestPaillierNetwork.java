@@ -22,7 +22,7 @@ public class TestPaillierNetwork {
     * @throws IOException
     */
     public static void user(String[] args) throws IOException {
-        /* 提取测试数据 */
+        /*  */
         int index = 1;
         String ipC1 = args[index++];
         int portC1 = Integer.parseInt(args[index++]);
@@ -41,7 +41,7 @@ public class TestPaillierNetwork {
         PrintWriter writerC2 = new PrintWriter(socketC2.getOutputStream());
         BufferedReader readerC2 = new BufferedReader(new InputStreamReader(socketC2.getInputStream()));
 
-        /* 计算过程 */
+        /*  */
         Util.writeInt(testNumber, writerC1);
         Util.writeInt(testNumber, writerC2);
         Util.writeInt(dataNumber, writerC1);
@@ -73,7 +73,7 @@ public class TestPaillierNetwork {
     * @throws IOException
     */
     public static void c1(String[] args) throws IOException {
-        /* 提取测试数据 */
+        /*  */
         int index = 1;
         int portC1 = Integer.parseInt(args[index++]);
 
@@ -87,7 +87,7 @@ public class TestPaillierNetwork {
         PrintWriter writerC2 = new PrintWriter(socketC2.getOutputStream());
         BufferedReader readerC2 = new BufferedReader(new InputStreamReader(socketC2.getInputStream()));
 
-        /* 计算过程 */
+        /*  */
         int testNumber = Util.readInt(readerUser);
         int dataNumber = Util.readInt(readerUser);
         PaillierPrivateKey privateKey = Paillier.parseJsonToPrivateKey(readerUser.readLine());
@@ -125,7 +125,7 @@ public class TestPaillierNetwork {
     * @throws IOException
     */
     public static void c2(String[] args) throws IOException {
-        /* 提取测试数据 */
+        /*  */
         int index = 1;
         String ipC1 = args[index++];
         int portC1 = Integer.parseInt(args[index++]);
@@ -141,7 +141,7 @@ public class TestPaillierNetwork {
         PrintWriter writerC1 = new PrintWriter(socketC1.getOutputStream());
         BufferedReader readerC1 = new BufferedReader(new InputStreamReader(socketC1.getInputStream()));
 
-        /* 计算过程 */
+        /* */
         int testNumber = Util.readInt(readerUser);
         int dataNumber = Util.readInt(readerUser);
         PaillierPrivateKey privateKey = Paillier.parseJsonToPrivateKey(readerUser.readLine());
@@ -174,7 +174,6 @@ public class TestPaillierNetwork {
 
     public static void main(String[] args) throws IOException {
 
-        // args不是null，其长度为0。
         System.out.println("args: " + Arrays.asList(args));
 
         // String c1 = "c1 8001";

@@ -26,8 +26,7 @@ import java.util.Random;
 import java.util.Set;
 
 /**
- * 本实验为sKNN实验，一共四个角色：data owner、C_1、C_2、data user
- * C1：向C_1和C_2发送查询请求，获取查询结果。
+ *
  */
 public class SecureKNNDataUser {
 
@@ -41,19 +40,18 @@ public class SecureKNNDataUser {
             System.out.println("Test Type: SKNN");
         else if (testType == 1)
             System.out.println("Test Type: Linear SKNN");
-        else if (testType == 2) // 由于填充的是桶里原有的数据，所以可能会检索到重复的点。
+        else if (testType == 2)
             System.out.println("Test Type: Bucket SKNN");
 
         int pow = 2;
         int testNumber = 10;
         int number = 1000;
-        int bitLength = 20; // 点的位数，注意s的选择，以及最大值的设置。
+        int bitLength = 20;
         int dirNodeCapacity = 50;
         int dataNodeCapacity = 50;
         int dimension = 2;
         float fillFactor = 0.5f;
 
-        // 查询条件
         int k = 5;
 
         Random random = new Random(0);
@@ -75,11 +73,11 @@ public class SecureKNNDataUser {
         ComparisonTuple[] cTuples = AdditiveSecretSharing.generateComparsionTuple(s, mod.longValue());
 
         BigInteger[][] dataset = generateDataset(dimension, number, bitLength, random);
-        // BigInteger[][] dataset = loadGowallaDataset("D:\\研究生\\实验室\\资料\\数据集\\Gowalla\\loc-gowalla_totalCheckins\\Gowalla_totalCheckins.txt", number);
+        // BigInteger[][] dataset = loadGowallaDataset("D:\\Gowalla\\loc-gowalla_totalCheckins\\Gowalla_totalCheckins.txt", number);
         RTree tree = new RTree(dirNodeCapacity, dataNodeCapacity, fillFactor, Constants.RTREE_QUADRATIC, dimension);
         List<DataProcessor.Entry> entries = new ArrayList<>();
         KDTreePoint[] points = new KDTreePoint[number];
-        // 插入结点
+
         for (int i = 0; i < dataset.length; i++) {
             BigInteger id = dataset[i][dimension];
 
@@ -144,13 +142,11 @@ public class SecureKNNDataUser {
         writerC2.println(AdditiveSecretSharing.parseComparisionTupleToJson(cTuples[1]));
         writerC2.flush();
 
-        // 秘密分享
         List<DataProcessor.Node> arrayT = constructArrayT(tree);
         List<List<DataProcessor.Node>> arrayTSecrets = shareArrayT(arrayT, mod);
         List<DataProcessor.Node> buckets = generateBuckets(leafNodes);
         List<List<DataProcessor.Node>> bucketsSecrets = shareArrayT(buckets, mod);
 
-        // 将秘密分享给C_1、C_2
         sendNodeArray(arrayTSecrets.get(0), writerC1);
         sendNodeArray(arrayTSecrets.get(1), writerC2);
 
@@ -164,7 +160,6 @@ public class SecureKNNDataUser {
         for (int j = 0; j < testNumber; j++) {
             System.out.print(j + " ");
 
-            // 将查询请求分别发送给C_1和C_2
             BigInteger[] pointData = new BigInteger[dimension];
             for (int i = 0; i < dimension; i++) {
                 pointData[i] = new BigInteger(bitLength, random);
@@ -174,7 +169,6 @@ public class SecureKNNDataUser {
             sendQueryCondition(k, pointSecrets[0], writerC1);
             sendQueryCondition(k, pointSecrets[1], writerC2);
 
-            // 恢复结果
             List<BigInteger[]> r1 = JSONObject.parseArray(readerC1.readLine(), BigInteger[].class);
             List<BigInteger[]> r2 = JSONObject.parseArray(readerC2.readLine(), BigInteger[].class);
             Set<BigInteger> r = new HashSet<>();
@@ -183,7 +177,6 @@ public class SecureKNNDataUser {
             }
             // System.out.println("Data user get: " + r);
 
-            // 验证结果
             Set<BigInteger> validResult = getKNearest(dataset, point.getData(), dimension, pow, k);
 
             for (BigInteger id : validResult) {

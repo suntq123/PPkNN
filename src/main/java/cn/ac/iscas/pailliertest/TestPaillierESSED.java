@@ -25,7 +25,6 @@ public class TestPaillierESSED {
      * @throws IOException
      */
     public static void user(String[] args) throws IOException {
-        /* 提取测试数据 */
         int index = 1;
         String ipC1 = args[index++];
         int portC1 = Integer.parseInt(args[index++]);
@@ -37,7 +36,7 @@ public class TestPaillierESSED {
         int testNumber = Integer.parseInt(args[index++]);
         int m = Integer.parseInt(args[index++]);
 
-        int sigma = dataLength + 40; // 数值位数+安全参数，安全参数可以取40
+        int sigma = dataLength + 40;
 
         Socket socketC1 = new Socket(ipC1, portC1);
         PrintWriter writerC1 = new PrintWriter(socketC1.getOutputStream());
@@ -129,7 +128,7 @@ public class TestPaillierESSED {
     * @throws IOException
     */
     public static void c1(String[] args) throws IOException {
-        /* 提取测试数据 */
+        /*  */
         int index = 1;
         int portC1 = Integer.parseInt(args[index++]);
 
@@ -143,7 +142,7 @@ public class TestPaillierESSED {
         PrintWriter writerC2 = new PrintWriter(socketC2.getOutputStream());
         BufferedReader readerC2 = new BufferedReader(new InputStreamReader(socketC2.getInputStream()));
 
-        /* 计算过程 */
+        /* */
         int testNumber = Util.readInt(readerUser);
         PaillierPublicKey publicKey = Paillier.parseJsonToPublicKey(readerUser.readLine());
 
@@ -182,7 +181,7 @@ public class TestPaillierESSED {
     * @throws IOException
     */
     public static void c2(String[] args) throws IOException {
-        /* 提取测试数据 */
+        /*  */
         int index = 1;
         String ipC1 = args[index++];
         int portC1 = Integer.parseInt(args[index++]);
@@ -198,7 +197,7 @@ public class TestPaillierESSED {
         PrintWriter writerC1 = new PrintWriter(socketC1.getOutputStream());
         BufferedReader readerC1 = new BufferedReader(new InputStreamReader(socketC1.getInputStream()));
 
-        /* 计算过程 */
+        /*  */
         int testNumber = Util.readInt(readerUser);
         PaillierPrivateKey privateKey = Paillier.parseJsonToPrivateKey(readerUser.readLine());
 

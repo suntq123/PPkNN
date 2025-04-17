@@ -42,7 +42,7 @@ public class TestComparisionC2 {
             // ComparisonTuple cTuple2 = AdditiveSecretSharing.parseJsonToComparisionTuple(readerUser.readLine());
             RandomNumberTuple rTuple = AdditiveSecretSharing.parseJsonToRandomNumberTuple(readerUser.readLine());
 
-            Util.writeInt(1, writerUser); // 提示User已收到，然后再开始传输数值
+            Util.writeInt(1, writerUser);
 
             AdditiveSecretSharing.PartyID partyID = AdditiveSecretSharing.PartyID.C2;
 

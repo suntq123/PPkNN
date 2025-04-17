@@ -47,7 +47,6 @@ public class TestSKNNV2 {
      * @throws IOException
      */
     public static void user(String[] args) throws IOException {
-        /* 提取测试数据 */
         int index = 1;
         String ipC1 = args[index++];
         int portC1 = Integer.parseInt(args[index++]);
@@ -63,10 +62,6 @@ public class TestSKNNV2 {
         int m = Integer.parseInt(args[index++]); // dimension
         int k = Integer.parseInt(args[index++]);
 
-        // 模数mod的长度为l，计算方法如下：
-        // 点的范围是dataLength，则单个维度计算欧氏距离的范围是2 * dataLength
-        // 计算欧式距离后，还要对各维度进行求和，此时范围是：2 * dataLength + log_2(m)
-        // 则需要的判断范围是2 * dataLength + log_2(m) + 2
         int l = dataLength * 2 + (int) Util.log2(m) + 2;
         if (testType == 2) {
             l = 45;
@@ -168,7 +163,7 @@ public class TestSKNNV2 {
             writerC2.println(parseRandomNumberTupleToJson(tuples[1]));
             writerC2.flush();
 
-            /* 计算过程 */
+            /*  */
             Util.writeInt(testNumber, writerC1);
             Util.writeInt(testNumber, writerC2);
 
@@ -207,7 +202,7 @@ public class TestSKNNV2 {
                     }
                     // System.out.println("Data user get: " + r);
 
-                    // 验证结果
+                    //
                     Set<BigInteger> validResult = getKNearest(dataset, q, m, 2, k);
 
                     for (BigInteger id : validResult) {
@@ -246,7 +241,7 @@ public class TestSKNNV2 {
     * @throws IOException
     */
     public static void c1(String[] args) throws IOException {
-        /* 提取测试数据 */
+        /* */
         int index = 1;
         int portC1 = Integer.parseInt(args[index++]);
 
@@ -260,7 +255,7 @@ public class TestSKNNV2 {
         PrintWriter writerC2 = new PrintWriter(socketC2.getOutputStream());
         BufferedReader readerC2 = new BufferedReader(new InputStreamReader(socketC2.getInputStream()));
 
-        /* 计算过程 */
+        /*  */
         int testType = Util.readInt(readerUser);
         int k = Util.readInt(readerUser);
         BigInteger mod = Util.readBigInteger(readerUser);
@@ -322,7 +317,7 @@ public class TestSKNNV2 {
     * @throws IOException
     */
     public static void c2(String[] args) throws IOException {
-        /* 提取测试数据 */
+        /*  */
         int index = 1;
         String ipC1 = args[index++];
         int portC1 = Integer.parseInt(args[index++]);
@@ -338,7 +333,7 @@ public class TestSKNNV2 {
         PrintWriter writerC1 = new PrintWriter(socketC1.getOutputStream());
         BufferedReader readerC1 = new BufferedReader(new InputStreamReader(socketC1.getInputStream()));
 
-        /* 计算过程 */
+        /* */
         int testType = Util.readInt(readerUser);
         int k = Util.readInt(readerUser);
         BigInteger mod = Util.readBigInteger(readerUser);
@@ -605,9 +600,9 @@ public class TestSKNNV2 {
         int testType = 2; // 0-BPPkNN  2-VPPkNN
         int datasetType = 1; // 0-Synthetic dataset  1-Real world dataset
         int N = 1024; // dataset size
-        int dataLength = 20; // the bit length of numerical values
+        int dataLength = 12; // the bit length of numerical values
         int dimension = 2; // dimension of data
-        int k = 25; // k in kNN
+        int k = 5; // k in kNN
         String c1 = "c1 8001";
         String c2 = "c2 127.0.0.1 8001 8002";
         String user = "user 127.0.0.1 8001 127.0.0.1 8002 " // role ipC1 portC1 ipC2 portC2

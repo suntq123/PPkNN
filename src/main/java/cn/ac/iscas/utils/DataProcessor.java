@@ -93,7 +93,7 @@ public class DataProcessor {
     }
 
     /**
-     * 实际上就是Entry数组
+     *
      */
     public static class Node {
 
@@ -131,11 +131,7 @@ public class DataProcessor {
     }
 
     /**
-     * 个人实验需要
-     * 根据R-tree构建数组T
-     * 要求T的首元素为root节点，其他节点放在数组T中，并由T的地址来指向各节点
-     * <p>
-     * 由于只是为了测试效率，本实验先不将节点随机打乱放到数组T中。
+     *
      *
      * @param rTree
      * @return
@@ -144,7 +140,6 @@ public class DataProcessor {
 
         List<Node> arrayT = new ArrayList<>();
 
-        // 层次遍历
         List<RTNode> list = new ArrayList<>();
         list.add(rTree.getRoot());
 
@@ -162,12 +157,12 @@ public class DataProcessor {
 
                     node.add(new Entry(rectangle, label));
                 }
-            } else { // 叶子节点，在实验中，叶子节点的Rectangle是点
+            } else {
                 for (int i = 0; i < list.get(index).getUsedSpace(); i++) {
                     Rectangle rectangle = list.get(index).getData()[i];
 
                     Point point = rectangle.getLow();
-                    BigInteger id = rectangle.getData(); // 将point的id作为label
+                    BigInteger id = rectangle.getData();
 
                     node.add(new Entry(point, id));
                 }
@@ -191,7 +186,7 @@ public class DataProcessor {
             Node node = new Node(rectangle);
             for (int i = 0; i < kdNode.points.length; i++) {
                 Point point = new Point(kdNode.points[i].data);
-                BigInteger id = kdNode.points[i].id; // 将point的id作为label
+                BigInteger id = kdNode.points[i].id;
 
                 node.add(new Entry(point, id));
             }
@@ -220,24 +215,23 @@ public class DataProcessor {
     // public static List<DataProcessor.Node> generateBuckets(RTree tree) {
     //     List<DataProcessor.Node> buckets = new ArrayList<>();
 
-    //     // 层次遍历
     //     List<RTNode> list = new ArrayList<>();
     //     list.add(tree.getRoot());
 
     //     int index = 0;
-    //     while (index < list.size()) { // 叶子节点的父节点即为一个bucket
+    //     while (index < list.size()) {
 
-    //         if (!list.get(index).isLeaf()) { // 不是叶子节点
+    //         if (!list.get(index).isLeaf()) {
     //             for (int i = 0; i < list.get(index).getUsedSpace(); i++) {
     //                 list.add(((RTDirNode) list.get(index)).getChild(i));
     //             }
-    //         } else { // 叶子节点，在实验中，叶子节点的Rectangle是点
+    //         } else {
     //             Node node = new Node(list.get(index).getNodeRectangle());
     //             for (int i = 0; i < list.get(index).getUsedSpace(); i++) {
     //                 Rectangle rectangle = list.get(index).getData()[i];
 
     //                 Point point = rectangle.getLow();
-    //                 BigInteger id = rectangle.getData(); // 将point的id作为label
+    //                 BigInteger id = rectangle.getData();
 
     //                 node.add(new Entry(point, id));
     //             }
@@ -302,7 +296,7 @@ public class DataProcessor {
                 Entry entry1, entry2;
                 BigInteger[] ptrSecrets = randomSplit(entry.ptr, mod);
 
-                if (entry.leafFlag) { // 如果是叶子节点，则是point，则
+                if (entry.leafFlag) {
                     Point[] pointSecrets = sharePoint(entry.point, mod);
                     entry1 = new Entry(pointSecrets[0], ptrSecrets[0]);
                     entry2 = new Entry(pointSecrets[1], ptrSecrets[1]);
@@ -396,20 +390,11 @@ public class DataProcessor {
     }
 
     /**
-     * 论文实验的数据集生成算法。
-     * 本算法生成number个维度为dimension的定义域为[0,scope]的Point，以及指向元素的ptr，并不直接生成Rectangle。
-     * 返回值为BigInteger[][]，其中每个BigInteger[]代表一条数据，BigInteger[][0,dimension-1]代表Point，BigInteger[][dimension]代表ptr。
-     * <p>
-     * 要求：
-     * 1.随机生成
-     * 2.维度由dimension决定
-     * 3.数据量由number决定
-     * 4.定义域由bitLength决定（[0, 2^bitLength-1]）
-     * <p>
      *
-     * @param dimension Point的维度
-     * @param number    数据集大小，即Point的数量
-     * @param bitLength     Point坐标值的范围：[0, 2^bitLength-1]
+     *
+     * @param dimension
+     * @param number
+     * @param bitLength
      * @return 
      */
     public static BigInteger[][] generateDataset(int dimension, int number, int bitLength, Random random) {
@@ -418,7 +403,7 @@ public class DataProcessor {
         // Random random = new Random();
         for (int i = 0; i < number; i++) {
             for (int j = 0; j < dimension; j++) {
-                dataset[i][j] = new BigInteger(bitLength, random); // 该方法得到的整数范围为：[0, 2^bitLength - 1]，即其最大长度为bitLength
+                dataset[i][j] = new BigInteger(bitLength, random);
             }
             dataset[i][dimension] = BigInteger.valueOf(i); // ptr
         }
@@ -645,12 +630,11 @@ public class DataProcessor {
 
         // // BigInteger[][] dataset = generateDataset(dimension, number, bitLength);
         // BigInteger[][] dataset = loadGowallaDataset(
-        //         "D:\\研究生\\实验室\\资料\\数据集\\Gowalla\\loc-gowalla_totalCheckins\\Gowalla_totalCheckins.txt", number);
+        //         "Gowalla\\loc-gowalla_totalCheckins\\Gowalla_totalCheckins.txt", number);
         // System.out.println(Arrays.deepToString(dataset));
         // System.out.println(dataset.length);
 
         // RTree tree = new RTree(2, 5, 0.4f, Constants.RTREE_QUADRATIC, dimension);
-        // // 插入结点
         // for (int i = 0; i < number; i++) {
         //     BigInteger id = dataset[i][dimension];
 
@@ -679,17 +663,17 @@ public class DataProcessor {
         // List<Node> list = JSONObject.parseArray(s, Node.class);
         // System.out.println(list);
 
-        int number = 25000;
-        String datasetPath = "D:\\研究生\\实验室\\资料\\数据集\\Gowalla\\loc-gowalla_totalCheckins\\Gowalla_totalCheckins.txt";
-        String savePath = "C:\\Users\\Admin\\Desktop\\test\\sknn\\Gowalla_Random_Select_" + number + ".txt";
-        randomSelectGowallaDataset(datasetPath, savePath, number);
+//        int number = 25000;
+//        String datasetPath = "D:\\Gowalla\\loc-gowalla_totalCheckins\\Gowalla_totalCheckins.txt";
+//        String savePath = "C:\\Users\\Admin\\Desktop\\test\\sknn\\Gowalla_Random_Select_" + number + ".txt";
+//        randomSelectGowallaDataset(datasetPath, savePath, number);
     }
 
     //    public static void main(String[] args) {
-    //        // 结点容量：4；填充因子：0.4；树类型：二维
+    //        //
     // //        RTree tree = new RTree(4, 0.4f, Constants.RTREE_QUADRATIC, 2);
     //        RTree tree = new RTree(2, 0.5f, Constants.RTREE_QUADRATIC, 2);
-    //        // 每一行的四个数构成两个点（一个矩形）
+    //
     //        int[] f = {
     //                2, 3, 2, 3,
     //                5, 1, 5, 1,
@@ -708,7 +692,6 @@ public class DataProcessor {
     //            labelList[i] = i;
     //        }
 
-    //        // 插入结点
     //        for (int i = 0; i < f.length; ) {
     //            BigInteger id = BigInteger.valueOf(labelList[i / 4]);
     //            Point p1 = new Point(new BigInteger[]{BigInteger.valueOf(f[i++]), BigInteger.valueOf(f[i++])});
@@ -721,7 +704,7 @@ public class DataProcessor {
     //        System.out.println("---------------------------------");
     //        System.out.println("Now the tree is :");
     //        List<RTNode> levelTraversalList = tree.traverseLevelOrder();
-    //        System.out.println("树中节点的数量：" + levelTraversalList.size());
+    //        System.out.println("：" + levelTraversalList.size());
     //        int prevLevel = levelTraversalList.get(0).getLevel();
     //        for (RTNode node : levelTraversalList) {
     //            if (node.getLevel() != prevLevel) {

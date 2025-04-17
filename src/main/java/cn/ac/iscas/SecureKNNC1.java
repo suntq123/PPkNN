@@ -16,8 +16,7 @@ import java.net.Socket;
 import java.util.List;
 
 /**
- * 本实验为sKNN实验，一共四个角色：data owner、C_1、C_2、data user
- * C1：首先接收data owner的T表的秘密分享，然后接受data user的查询请求，与C_2进行两方安全计算，并将结果返回给data user。
+ *
  */
 public class SecureKNNC1 {
 
@@ -49,7 +48,6 @@ public class SecureKNNC1 {
         System.out.println("testNumber = " + testNumber);
         System.out.println("pow = " + pow);
 
-        // 首先接收data user的T表的秘密分享
         List<DataProcessor.Node> arrayTSecret = DataProcessor.receiveNodeArray(readerUser);
         // System.out.println(arrayTSecret.size());
         // System.out.println(arrayTSecret);
@@ -62,12 +60,10 @@ public class SecureKNNC1 {
         long communicationTimeSum = 0l;
         for (int i = 0; i < testNumber; i++) {
 
-            // 然后接受data user的查询请求
             JSONObject queryCondition = DataProcessor.receiveQueryConditionJson(readerUser);
             int k = queryCondition.getInteger("k");
             Point point = JSONObject.parseObject(queryCondition.getString("point"), Point.class);
 
-            // 与C_2进行两方安全计算
             RunningTimeCounter.startRecord(RunningTimeCounter.COMMUNICATION_TIME);
             List<BigInteger[]> result = null;
             long timePre = System.currentTimeMillis();
@@ -85,7 +81,6 @@ public class SecureKNNC1 {
             communicationTimeSum += RunningTimeCounter.get(RunningTimeCounter.COMMUNICATION_TIME);
             // System.out.println(result);
 
-            // 将结果返回给data user
             writerUser.write(JSONObject.toJSONString(result) + "\n");
             writerUser.flush();
         }

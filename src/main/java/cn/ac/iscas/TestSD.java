@@ -53,7 +53,7 @@ public class TestSD {
                 Util.writeInt(i, writerC2);
                 Util.readInt(readerC2);
 
-                // 与C_2进行两方安全计算
+                //
                 long timePre = System.nanoTime();
                 d1 = AdditiveSecretSharing.secureMinkowskiDistance(partyID, 2, p1, q1, triple, cTuple1, mod,
                         readerC2, writerC2);
@@ -65,13 +65,12 @@ public class TestSD {
                 Util.writeInt(i, writerC2);
                 Util.readInt(readerC2);
 
-                // 与C_2进行两方安全计算
+                //
                 long timePre = System.nanoTime();
                 d1 = AdditiveSecretSharing.secureMinDistanceFromBoxToPoint(partyID, 2, box1, p1, triple, cTuple1, mod,
                         readerC2, writerC2);
                 timeSum += System.nanoTime() - timePre;
             }
-            // 将结果返回给data user
             Util.writeBigInteger(d1, writerUser);
         }
         long timeAvg = timeSum / testNumber;
@@ -123,7 +122,6 @@ public class TestSD {
                 Util.writeInt(i, writerC1);
                 Util.readInt(readerC1);
 
-                // 与C_1进行两方安全计算
                 long timePre = System.nanoTime();
                 d2 = AdditiveSecretSharing.secureMinkowskiDistance(partyID, 2, p2, q2, triple, cTuple2, mod,
                         readerC1, writerC1);
@@ -135,14 +133,12 @@ public class TestSD {
                 Util.writeInt(i, writerC1);
                 Util.readInt(readerC1);
 
-                // 与C_2进行两方安全计算
                 long timePre = System.nanoTime();
                 d2 = AdditiveSecretSharing.secureMinDistanceFromBoxToPoint(partyID, 2, box2, p2, triple, cTuple2, mod,
                         readerC1, writerC1);
                 timeSum += System.nanoTime() - timePre;
             }
 
-            // 将结果返回给data user
             Util.writeBigInteger(d2, writerUser);
         }
         long timeAvg = timeSum / testNumber;
@@ -159,7 +155,7 @@ public class TestSD {
         int portC2 = 8005;
 
         int testNumber = 10000;
-        int bitLength = 20; // 点的位数，注意s的选择，以及最大值的设置。
+        int bitLength = 20;
         int dimension = 2;
 
         Random random = new Random();
@@ -241,7 +237,6 @@ public class TestSD {
 
     public static void sdc(Random random, int bitLength, int dimension, BigInteger mod, BufferedReader readerC1,
             PrintWriter writerC1, BufferedReader readerC2, PrintWriter writerC2) throws IOException {
-        // 将查询请求分别发送给C_1和C_2
         BigInteger[] p = new BigInteger[dimension];
         BigInteger[] q = new BigInteger[dimension];
         BigInteger[][] pSecrets = new BigInteger[2][dimension];
@@ -265,13 +260,11 @@ public class TestSD {
         Util.writeBigIntegers(pSecrets[1], writerC2);
         Util.writeBigIntegers(qSecrets[1], writerC2);
 
-        // 恢复结果
         BigInteger d1 = Util.readBigInteger(readerC1);
         BigInteger d2 = Util.readBigInteger(readerC2);
 
         BigInteger ssd = AdditiveSecretSharing.add(d1, d2, mod);
 
-        // 验证结果
         BigInteger distance = Util.squareEuclideanDistance(p, q);
 
         if (!ssd.equals(distance)) {
@@ -283,7 +276,7 @@ public class TestSD {
 
     public static void smdc(Random random, int bitLength, int dimension, BigInteger mod, BufferedReader readerC1,
             PrintWriter writerC1, BufferedReader readerC2, PrintWriter writerC2) throws IOException {
-        // 将查询请求分别发送给C_1和C_2
+
         BigInteger[] p = new BigInteger[dimension];
         BigInteger[][] box = new BigInteger[dimension][2];
         BigInteger[][] pSecrets = new BigInteger[2][dimension];
@@ -319,13 +312,11 @@ public class TestSD {
         Util.writeBigIntegers(pSecrets[1], writerC2);
         Util.writeBigIntegers(boxSecrets[1], writerC2);
 
-        // 恢复结果
         BigInteger d1 = Util.readBigInteger(readerC1);
         BigInteger d2 = Util.readBigInteger(readerC2);
 
         BigInteger ssd = AdditiveSecretSharing.add(d1, d2, mod);
 
-        // 验证结果
         BigInteger distance = BigInteger.ZERO;
         for (int i = 0; i < dimension; i++) {
             if (p[i].compareTo(box[i][0]) < 0) {

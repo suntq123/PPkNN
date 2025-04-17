@@ -10,9 +10,7 @@ import com.alibaba.fastjson.JSON;
 import cn.ac.iscas.utils.Util;
 
 /**
- * 两方加性秘密分享
- * <p>
- * 其中“[]”符号表示秘密分享，如[a]等同于将a分享成[a]_1和[a]_2
+ *
  */
 public class AdditiveSecretSharing {
 
@@ -25,7 +23,7 @@ public class AdditiveSecretSharing {
     }
 
     /**
-     * 此处是某方的乘法三元组的秘密
+     *
      */
     public static class MultiplicationTriple {
         // [a]_i, [b]_i, [c]_i
@@ -162,19 +160,11 @@ public class AdditiveSecretSharing {
     }
 
     /**
-     * 要求：x < mod/2
-     * 计算中会限制：  mod / 2 < x1 < mod， 则 x1 + x2 = x % mod 的同时保证 x1 + x2 > mod
-     * 保证 x1 + x2 > mod，就无须担心后续判断大小时会出错。
-     * 
-     * 将x随机划分x_1和x_2，要求x = x_1 + x_2
-     * <p>
-     * 过程：先随机抽取x_1，然后x_2 = x - x_1
-     * <p>
-     * 注意：由于此代码只是实验性质，所以不考虑伪随机数的安全性
+     *
      *
      * @param x
      * @param mod
-     * @return 二元数组[x_1, x_2]
+     * @return [x_1, x_2]
      */
     public static BigInteger[] randomSplit(BigInteger x, BigInteger mod) {
         if (x == null)
@@ -189,13 +179,9 @@ public class AdditiveSecretSharing {
     }
 
     /**
-     * 在一些算法中会涉及到公开常量的运算，这里公开常量并没有被秘密分享，所以在C_1和C_2各自运算前需要设置一个拆分规则：
-     * 假设公开常量为a，
-     * C_1直接使用a参与运算；
-     * C_2直接使用0参与运算。
      *
-     * @param partyID C_1或C_2
-     * @param a       公开常量
+     * @param partyID C_1 or C_2
+     * @param a
      * @return
      */
     public static BigInteger shareConstant(PartyID partyID, BigInteger a) {
@@ -209,10 +195,10 @@ public class AdditiveSecretSharing {
     public static BigInteger recover(PartyID partyID, BigInteger xi, BigInteger mod,
             BufferedReader reader, PrintWriter writer) throws IOException {
 
-        Util.writeBigInteger(xi, writer); // 将自己的秘密发送给对方
-        BigInteger xTemp = Util.readBigInteger(reader); // 接收对方的秘密
+        Util.writeBigInteger(xi, writer);
+        BigInteger xTemp = Util.readBigInteger(reader);
 
-        return add(xi, xTemp, mod); // 加性秘密恢复
+        return add(xi, xTemp, mod);
     }
 
     public static BigInteger[] recover(PartyID partyID, BigInteger[] xiArray, BigInteger mod,
@@ -220,8 +206,8 @@ public class AdditiveSecretSharing {
 
         int len = xiArray.length;
 
-        // Util.writeBigIntegers(xiArray, writer); // 将自己的秘密发送给对方
-        // BigInteger[] tiArray = Util.readBigIntegers(len, reader); // 接收对方的秘密
+        // Util.writeBigIntegers(xiArray, writer);
+        // BigInteger[] tiArray = Util.readBigIntegers(len, reader);
         BigInteger[] tiArray = Util.exchangeBigIntegers(xiArray, reader, writer);
 
         BigInteger[] result = new BigInteger[len];
@@ -229,26 +215,25 @@ public class AdditiveSecretSharing {
             result[i] = add(xiArray[i], tiArray[i], mod);
         }
 
-        return result; // 加性秘密恢复
+        return result;
     }
 
     public static long recover(PartyID partyID, long xi, long mod,
             BufferedReader reader, PrintWriter writer) throws IOException {
 
-        Util.writeLong(xi, writer); // 将自己的秘密发送给对方
-        long xTemp = Util.readLong(reader); // 接收对方的秘密
+        Util.writeLong(xi, writer);
+        long xTemp = Util.readLong(reader);
 
-        return Util.modOperation(xi + xTemp, mod); // (xi + xTemp) % mod; // 加性秘密恢复
+        return Util.modOperation(xi + xTemp, mod); // (xi + xTemp) % mod;
     }
 
     /**
-     * 取模加法
-     * 当x和y为一个秘密元组时，为恢复秘密
      *
-     * @param x   [x]的之一
-     * @param y   [y]的之一
-     * @param mod 模数
-     * @return [z]的之一或者重建结果
+     *
+     * @param x
+     * @param y
+     * @param mod
+     * @return
      */
     public static BigInteger add(BigInteger x, BigInteger y, BigInteger mod) {
         return x.add(y).mod(mod);
@@ -259,7 +244,7 @@ public class AdditiveSecretSharing {
     }
 
     /**
-    * 常量和元素乘法
+    *
     * <p>
     * z_i = alpha * x_i
     */
@@ -276,27 +261,13 @@ public class AdditiveSecretSharing {
     }
 
     /**
-     * 元素乘法，目的是计算z = x*y
-     * <p>
-     * multiplyInC1()函数代表C_1的操作
-     * multiplyInC2()函数代表C_2的操作
-     * Socket通信由C_1来初始化
-     * <p>
-     * C_1和C_2先各自计算：
-     * [e]_i = [x]_i - [a]_i
-     * [f]_i = [y]_i - [b]_i
-     * <p>
-     * C_1和C_2交换秘密并恢复e和f
-     * <p>
-     * C_1计算： [z]_1 = f * [a]_1 + e * [b]_1 + [c]_1
-     * C_2计算： [z]_2 = e * f + f * [a]_2 + e * [b]_2 + [c]_2
+     *
      */
     public static BigInteger multiply(PartyID partyID, BigInteger xi, BigInteger yi, MultiplicationTriple triple,
             BigInteger mod, BufferedReader reader, PrintWriter writer) throws IOException {
         BigInteger ei = subtract(xi, triple.ai, mod);
         BigInteger fi = subtract(yi, triple.bi, mod);
 
-        // C_1与C_2交换秘密并恢复e和f
         Util.writeBigIntegers(new BigInteger[] { ei, fi }, writer);
         BigInteger[] t = Util.readBigIntegers(2, reader);
         BigInteger e = add(ei, t[0], mod);
@@ -315,7 +286,6 @@ public class AdditiveSecretSharing {
         // long ei = Util.modOperation(xi.longValue() - triple.ai.longValue(), mod.longValue()); // subtract(xi, triple.ai, mod);
         // long fi = Util.modOperation(yi.longValue() - triple.bi.longValue(), mod.longValue()); //  subtract(yi, triple.bi, mod);
 
-        // // C_1与C_2交换秘密并恢复e和f
         // writer.println(ei);
         // writer.println(fi);
         // writer.flush();
@@ -349,7 +319,7 @@ public class AdditiveSecretSharing {
         BigInteger[] ts = Util.exchangeBigIntegers(efis, reader, writer);
 
         for (int i = 0; i < num; i++) {
-            // C_1与C_2交换秘密并恢复e和f
+
             BigInteger e = add(efis[i], ts[i], mod);
             BigInteger f = add(efis[i + num], ts[i + num], mod);
 
@@ -368,9 +338,7 @@ public class AdditiveSecretSharing {
     }
 
     /*
-     * 两分法连乘
-     * 
-     * 减少通讯复杂度为：log_2(n)，其中n为数值个数。
+     *
      */
     public static BigInteger secureProduct(PartyID partyID, BigInteger[] xiArray, MultiplicationTriple triple,
             BigInteger mod, BufferedReader reader, PrintWriter writer) throws IOException {
@@ -385,7 +353,7 @@ public class AdditiveSecretSharing {
 
             BigInteger[] tiArray = multiplyS(partyID, preiArray, postiArray, triple, mod, reader, writer);
 
-            if (xiArray.length % 2 != 0) { // 若长度为奇数，则末尾元素未参与此轮乘法
+            if (xiArray.length % 2 != 0) {
                 BigInteger taili = xiArray[xiArray.length - 1];
 
                 xiArray = new BigInteger[subLen + 1];
@@ -403,8 +371,8 @@ public class AdditiveSecretSharing {
     public static BigInteger[] secureProduct(PartyID partyID, BigInteger[][] xiArrays, MultiplicationTriple triple,
             BigInteger mod, BufferedReader reader, PrintWriter writer) throws IOException {
 
-        int arrNum = xiArrays.length; // 数组个数
-        int arrLen = xiArrays[0].length; // 各数组长度
+        int arrNum = xiArrays.length;
+        int arrLen = xiArrays[0].length;
 
         while (xiArrays[0].length > 1) {
             int subLen = arrLen / 2;
@@ -420,7 +388,7 @@ public class AdditiveSecretSharing {
 
             BigInteger[] tisArray = multiplyS(partyID, preisArray, postisArray, triple, mod, reader, writer);
 
-            if (arrLen % 2 != 0) { // 若长度为奇数，则末尾元素未参与此轮乘法
+            if (arrLen % 2 != 0) {
                 for (int i = 0; i < arrNum; i++) {
                     BigInteger tailii = xiArrays[i][arrLen - 1];
 
@@ -437,7 +405,7 @@ public class AdditiveSecretSharing {
                 }
                 // xiArray = new BigInteger[subLen];
             }
-            // if (xiArray.length % 2 != 0) { // 若长度为奇数，则末尾元素未参与此轮乘法
+            // if (xiArray.length % 2 != 0) {
             //     BigInteger taili = xiArray[xiArray.length - 1];
 
             //     xiArray = new BigInteger[subLen + 1];
@@ -480,10 +448,7 @@ public class AdditiveSecretSharing {
     }
 
     /**
-    * 如果x<a，则令x=x+a
-    * <p>
-    * 该函数中会向C_1和C_2泄露Bool(x < a)的信息，
-    * 不过该算法只用于判断a等于模数的情况，由此，C_1和C_2即使知道x的秘密分享之和与模数的大小关系，也没有任何利用价值。
+    *
     */
     public static BigInteger smallerThenPlus(PartyID partyID, BigInteger x, BigInteger a, MultiplicationTriple triple,
             BigInteger mod, BufferedReader reader, PrintWriter writer) throws IOException {
@@ -500,23 +465,11 @@ public class AdditiveSecretSharing {
 
     /**
     * Secure decision node evaluation
-    * 实际上就是安全比较算法
-    * 当 x < y 时，结果：b = [b]_1 + [b]_2 = 1
-    * 否则，b = 0
-    * <p>
-    * 使用该算法时请注意:
-    * 加性秘密分享是在加法群上进行运算，所以本质上内部元素是不应该有大小之分的：如1 < 2，但是 1 = 1+s > 2。
-    * 而本比较算法假设元素的实际大小范围为[0,s-1)，并在该范围内进行大小比较。
-    * 所以，本算法要求用户自己限制比较元素的范围为：[0, s-1)，超过该范围的可能会比较错误。
-    * 同时，由于是两方加性秘密分享，所以秘密恢复时的值范围为：[0, 2s-2)，
-    * 所以，本算法会首先分别判断x和y是否小于s，如果小于，则将其加上s，使其范围为：[s,2s-1]，再进行比较。
-    * <p>
-    * 实现过程中，请注意算法中间模数的变化，此处mod代表s和p，按位计算时模数是2。
+    *
     */
     public static BigInteger secureComparision(PartyID partyID, BigInteger xi, BigInteger yi,
             MultiplicationTriple triple, BigInteger mod,
             BufferedReader reader, PrintWriter writer) throws IOException {
-        // // 先判断x和y是否大于等于mod，小于则加上
         xi = smallerThenPlus(partyID, xi, mod, triple, mod, reader, writer);
         yi = smallerThenPlus(partyID, yi, mod, triple, mod, reader, writer);
 
@@ -526,10 +479,7 @@ public class AdditiveSecretSharing {
     }
 
     /**
-     * 要保证比较的x,y的范围远小于mod，这样在拆分秘密时，x1,x2,y1,y2的范围都会较大，则x1+x2>mod,y1+y2>mod
-     * 
-     * 基于两方加性秘密分享的比较算法。
-     * 若x < y，则返回1；否则，返回0。
+     *
      * 
      * @param partyID
      * @param xi
@@ -547,7 +497,6 @@ public class AdditiveSecretSharing {
 
         BigInteger ai = xi.subtract(yi);
 
-        // 需要转成等长的二进制
         StringBuilder binary = new StringBuilder(Util.decimalToBinary(ai, mod.bitLength()));
 
         if (partyID == PartyID.C1)
@@ -566,39 +515,29 @@ public class AdditiveSecretSharing {
      */
     private static BigInteger secureComparisionInC1(String p, MultiplicationTriple triple, BigInteger mod,
             BufferedReader reader, PrintWriter writer) throws IOException {
-        // 二进制表示的p，低位在大地址，所以index从l-1开始递减
         int index = p.length() - 1;
 
-        // C_1和C_2计算 <c_1> = <p_1> * <q_1>
-        // 此处是模2
         BigInteger c1_1 = multiply(PartyID.C1, Util.charToBigInteger(p.charAt(index)), BigInteger.ZERO, triple,
                 BigInteger.TWO, reader, writer);
         index--;
 
-        // 此处是模2
         while (index >= 1) {
-            // C_1和C_2计算 <d_k> = <p_k> * <q_k> + 1
             BigInteger dk1 = multiply(PartyID.C1, Util.charToBigInteger(p.charAt(index)), BigInteger.ZERO, triple,
                     BigInteger.TWO, reader, writer);
             dk1 = add(dk1, BigInteger.ONE, BigInteger.TWO);
 
-            // C_1和C_2计算 <e_k> = <w_k> * <c_{k-1}> + 1
             BigInteger ek1 = multiply(PartyID.C1, Util.charToBigInteger(p.charAt(index)), c1_1, triple, BigInteger.TWO,
                     reader, writer);
             ek1 = add(ek1, BigInteger.ONE, BigInteger.TWO);
 
-            // C_1和C_2计算 <c_k> = <e_k> * <d_k> + 1
             c1_1 = multiply(PartyID.C1, ek1, dk1, triple, BigInteger.TWO, reader, writer);
             c1_1 = add(c1_1, BigInteger.ONE, BigInteger.TWO);
 
             index--;
         }
 
-        // C_1和C_2计算 <a_l> = <w_l> + <c_{l-1}>
-        // 此处是模2
         BigInteger al1 = add(Util.charToBigInteger(p.charAt(0)), c1_1, BigInteger.TWO);
 
-        // Z2 转 Zp，此处是模p
         // [[a_l]] = [[t_1]] + [[t_2]] - 2 * [[t_1]] * [[t_2]]
         // BigInteger t3_1 = add(al1, BigInteger.ZERO, mod); // [[t_3]]_1 = [[t_1]]_1 + [[t_2]]_1
         // BigInteger t4_1 = multiply(PartyID.C1, al1, BigInteger.ZERO, triple, mod, reader, writer); // [[t_4]]_1 = [[t_1]]_1 * [[t_2]]_1
@@ -612,36 +551,27 @@ public class AdditiveSecretSharing {
 
     private static BigInteger secureComparisionInC2(String q, MultiplicationTriple triple, BigInteger mod,
             BufferedReader reader, PrintWriter writer) throws IOException {
-        // 二进制表示的p，低位在大地址，所以index从l-1开始递减
         int index = q.length() - 1;
 
-        // C_1和C_2计算 <c_1> = <p_1> * <q_1>
-        // 此处是模2
         BigInteger c1_2 = multiply(PartyID.C2, BigInteger.ZERO, Util.charToBigInteger(q.charAt(index)), triple,
                 BigInteger.TWO, reader, writer);
         index--;
 
-        // 此处是模2
         while (index >= 1) {
-            // C_1和C_2计算 <d_k> = <p_k> * <q_k> + 1
             BigInteger dk2 = multiply(PartyID.C2, BigInteger.ZERO, Util.charToBigInteger(q.charAt(index)), triple,
                     BigInteger.TWO, reader, writer);
 
-            // C_1和C_2计算 <e_k> = <w_k> * <c_{k-1}> + 1
             BigInteger ek2 = multiply(PartyID.C2, Util.charToBigInteger(q.charAt(index)), c1_2, triple, BigInteger.TWO,
                     reader, writer);
 
-            // C_1和C_2计算 <c_k> = <e_k> * <d_k> + 1
             c1_2 = multiply(PartyID.C2, ek2, dk2, triple, BigInteger.TWO, reader, writer);
 
             index--;
         }
 
-        // C_1和C_2计算 <a_l> = <w_l> + <c_{l-1}>
-        // 此处是模2
+        //  <a_l> = <w_l> + <c_{l-1}>
         BigInteger al2 = add(Util.charToBigInteger(q.charAt(0)), c1_2, BigInteger.TWO);
 
-        // Z2 转 Zp，此处是模p
         // // [[a_l]] = [[t_1]] + [[t_2]] - 2 * [[t_1]] * [[t_2]]
         // BigInteger t3_1 = add(BigInteger.ZERO, al2, mod); // [[t_3]]_1 = [[t_1]]_1 + [[t_2]]_1
         // BigInteger t4_1 = multiply(PartyID.C2, BigInteger.ZERO, al2, triple, mod, reader, writer); // [[t_4]]_1 = [[t_1]]_1 * [[t_2]]_1
@@ -782,7 +712,7 @@ public class AdditiveSecretSharing {
     public static class RandomNumberTuple {
         public BigInteger r;
         public int l;
-        public BigInteger[] rBinary; // LSB在数组低位
+        public BigInteger[] rBinary;
 
         public RandomNumberTuple(BigInteger r, int l, BigInteger[] rBinary) {
             this.r = r;
@@ -822,32 +752,32 @@ public class AdditiveSecretSharing {
 
     /**
     * SC - v2
-    * 计算 bool(a < b)
+    *  bool(a < b)
     *
-    * mod: p，大素数，比特长度为l
+    * mod: p，
     * 0 <= ai, bi < p/2
     *
-    * 为保证数值总小于模数的一半，则模数的长度至少为数值的长度+2
+    *
     */
     public static BigInteger secureComparision(PartyID partyID, BigInteger ai, BigInteger bi,
             MultiplicationTriple triple, RandomNumberTuple rTuple, BigInteger mod,
             BufferedReader reader, PrintWriter writer) throws IOException {
 
-        // 计算 <c> = <a> - <b>
+        //  <c> = <a> - <b>
         BigInteger ci = ai.subtract(bi).mod(mod);
 
-        // 计算 < c<p/2 >
+        //  < c<p/2 >
         BigInteger ti = secureComparisionSub1(partyID, ci, triple, rTuple, mod, reader, writer);
 
-        // 计算 < a<b > = 1 - < c<p/2 >
+        // < a<b > = 1 - < c<p/2 >
         BigInteger resulti = shareConstant(partyID, BigInteger.ONE).subtract(ti).mod(mod);
 
         return resulti;
     }
 
     /*
-     * 计算< a < p/2 >
-     * mod: p，大素数，比特长度为l
+     * < a < p/2 >
+     * mod: p
      */
     private static BigInteger secureComparisionSub1(PartyID partyID, BigInteger ai,
             MultiplicationTriple triple, RandomNumberTuple rTuple, BigInteger mod,
@@ -862,27 +792,27 @@ public class AdditiveSecretSharing {
         // open/recover c
         BigInteger c = recover(partyID, ci, mod, reader, writer);
 
-        // 计算<alpha> = <c0 XOR r0>。当c0 = 0，<alpha> = <r0>；当c0 = 1, <alpha> = 1 - <r0>。
+        // <alpha> = <c0 XOR r0>。当c0 = 0，<alpha> = <r0>；当c0 = 1, <alpha> = 1 - <r0>。
         BigInteger c0 = c.mod(BigInteger.TWO);
         BigInteger alphai = (c0.equals(BigInteger.ZERO)) ? rTuple.rBinary[0]
                 : shareConstant(partyID, BigInteger.ONE).subtract(rTuple.rBinary[0]);
 
-        // 计算 <beta> = < c<r >
+        //  <beta> = < c<r >
         BigInteger betai = secureComparisionSub2(partyID, c, rTuple.rBinary, triple, rTuple, mod, reader, writer);
 
-        // 计算<x_0> = <beta> + <alpha> - 2 <alpha> <beta>
+        // <x_0> = <beta> + <alpha> - 2 <alpha> <beta>
         BigInteger ti = multiply(partyID, alphai, betai, triple, mod, reader, writer);
         BigInteger x0i = alphai.add(betai).subtract(BigInteger.TWO.multiply(ti)).mod(mod);
 
-        // 计算< a<p/2 > = 1 - <x_0>
+        // < a<p/2 > = 1 - <x_0>
         BigInteger resulti = shareConstant(partyID, BigInteger.ONE).subtract(x0i).mod(mod);
 
         return resulti;
     }
 
     /*
-     * 计算< a < b >
-     * 其中，a是公开值，b是秘密分享
+     * < a < b >
+     *
      */
     private static BigInteger secureComparisionSub2(PartyID partyID, BigInteger a, BigInteger[] biArray,
             MultiplicationTriple triple, RandomNumberTuple rTuple, BigInteger mod,
@@ -926,10 +856,10 @@ public class AdditiveSecretSharing {
 
     /**
     * SC S - v2
-    * mod: p，大素数，比特长度为l
+    * mod: p
     * 0 <= ai, bi < p/2
     *
-    * 为保证数值总小于模数的一半，则模数的长度至少为数值的长度+2
+    *
     */
     public static BigInteger[] secureComparision(PartyID partyID, BigInteger[] aiArray, BigInteger[] biArray,
             MultiplicationTriple triple, RandomNumberTuple rTuple, BigInteger mod,
@@ -937,16 +867,16 @@ public class AdditiveSecretSharing {
 
         int arrLen = aiArray.length;
 
-        // 计算 <c> = <a> - <b>
+        //  <c> = <a> - <b>
         BigInteger[] ciArray = new BigInteger[arrLen];
         for (int i = 0; i < arrLen; i++) {
             ciArray[i] = aiArray[i].subtract(biArray[i]).mod(mod);
         }
 
-        // 计算 < c<p/2 >
+        //  < c<p/2 >
         BigInteger[] tiArray = secureComparisionSub1(partyID, ciArray, triple, rTuple, mod, reader, writer);
 
-        // 计算 < a<b > = 1 - < c<p/2 >
+        //  < a<b > = 1 - < c<p/2 >
         BigInteger[] resultis = new BigInteger[arrLen];
         for (int i = 0; i < arrLen; i++) {
             resultis[i] = shareConstant(partyID, BigInteger.ONE).subtract(tiArray[i]).mod(mod);
@@ -956,8 +886,8 @@ public class AdditiveSecretSharing {
     }
 
     /*
-     * 计算< a < p/2 >
-     * mod: p，大素数，比特长度为l
+     * < a < p/2 >
+     * mod: p
      */
     private static BigInteger[] secureComparisionSub1(PartyID partyID, BigInteger[] aiArray,
             MultiplicationTriple triple, RandomNumberTuple rTuple, BigInteger mod,
@@ -980,7 +910,7 @@ public class AdditiveSecretSharing {
         // open/recover c
         BigInteger[] cArray = recover(partyID, ciArray, mod, reader, writer);
 
-        // 计算<alpha> = <c0 XOR r0>。当c0 = 0，<alpha> = <r0>；当c0 = 1, <alpha> = 1 - <r0>。
+        // <alpha> = <c0 XOR r0>。c0 = 0，<alpha> = <r0>；c0 = 1, <alpha> = 1 - <r0>。
         BigInteger[] alphaiArray = new BigInteger[arrayLen];
         for (int i = 0; i < arrayLen; i++) {
             BigInteger c0 = cArray[i].mod(BigInteger.TWO);
@@ -988,21 +918,21 @@ public class AdditiveSecretSharing {
                     : shareConstant(partyID, BigInteger.ONE).subtract(rTuple.rBinary[0]);
         }
 
-        // 计算 <beta> = < c<r >
+        //  <beta> = < c<r >
         BigInteger[][] triArray = new BigInteger[arrayLen][];
         for (int i = 0; i < arrayLen; i++) {
             triArray[i] = rTuple.rBinary;
         }
         BigInteger[] betaiArray = secureComparisionSub2(partyID, cArray, triArray, triple, rTuple, mod, reader, writer);
 
-        // 计算<x_0> = <beta> + <alpha> - 2 <alpha> <beta>
+        // <x_0> = <beta> + <alpha> - 2 <alpha> <beta>
         BigInteger[] tis = multiplyS(partyID, alphaiArray, betaiArray, triple, mod, reader, writer);
         BigInteger[] resultis = new BigInteger[arrayLen];
         for (int i = 0; i < arrayLen; i++) {
             // BigInteger ti = multiply(partyID, alphaiArray[i], betaiArray[i], triple, mod, reader, writer);
             BigInteger x0i = alphaiArray[i].add(betaiArray[i]).subtract(BigInteger.TWO.multiply(tis[i])).mod(mod);
 
-            // 计算< a<p/2 > = 1 - <x_0>
+            // < a<p/2 > = 1 - <x_0>
             resultis[i] = shareConstant(partyID, BigInteger.ONE).subtract(x0i).mod(mod);
         }
 
@@ -1010,8 +940,8 @@ public class AdditiveSecretSharing {
     }
 
     /*
-     * 计算< a < b >
-     * 其中，a是公开值，b是秘密分享
+     * < a < b >
+     *
      */
     private static BigInteger[] secureComparisionSub2(PartyID partyID, BigInteger[] aArray, BigInteger[][] biArrays,
             MultiplicationTriple triple, RandomNumberTuple rTuple, BigInteger mod,
@@ -1058,7 +988,7 @@ public class AdditiveSecretSharing {
             }
         }
 
-        // 计算 < a<b > = SUM( <e_i> <r_i> )
+        // < a<b > = SUM( <e_i> <r_i> )
         BigInteger[] teis = new BigInteger[arrLen * l];
         BigInteger[] trbis = new BigInteger[arrLen * l];
         for (int i = 0; i < arrLen; i++) {
@@ -1078,19 +1008,19 @@ public class AdditiveSecretSharing {
     }
 
     /*
-     * 等值比较协议
+     *
      */
     public static BigInteger secureEqual(PartyID partyID, BigInteger ai, BigInteger bi,
             MultiplicationTriple triple, RandomNumberTuple rTuple, BigInteger mod,
             BufferedReader reader, PrintWriter writer) throws IOException {
 
-        // 本地计算 <c> = <a> - <b> + <r>
+        //  <c> = <a> - <b> + <r>
         BigInteger ci = ai.subtract(bi).add(rTuple.r).mod(mod);
 
         // open/recover c
         BigInteger c = recover(partyID, ci, mod, reader, writer);
 
-        // 计算 <c=r>
+        //  <c=r>
         BigInteger resulti = secureEqualSub(partyID, c, rTuple.r, triple, rTuple, mod, reader, writer);
 
         return resulti;
@@ -1108,14 +1038,13 @@ public class AdditiveSecretSharing {
                     : shareConstant(partyID, BigInteger.ONE).subtract(rTuple.rBinary[i]);
         }
 
-        // 计算 <c=r> = PROD(<\alpha_i>)
+        // <c=r> = PROD(<\alpha_i>)
         BigInteger resulti = secureProduct(partyID, alphaiArray, triple, mod, reader, writer);
 
         return resulti;
     }
 
     /*
-    * 等值比较协议 S
     */
     public static BigInteger[] secureEqual(PartyID partyID, BigInteger[] aiArray, BigInteger[] biArray,
             MultiplicationTriple triple, RandomNumberTuple rTuple, BigInteger mod,
@@ -1123,7 +1052,7 @@ public class AdditiveSecretSharing {
 
         int arrLen = aiArray.length;
 
-        // 本地计算 <c> = <a> - <b> + <r>
+        // <c> = <a> - <b> + <r>
         BigInteger[] ciArray = new BigInteger[arrLen];
         for (int i = 0; i < arrLen; i++) {
             ciArray[i] = aiArray[i].subtract(biArray[i]).add(rTuple.r).mod(mod);
@@ -1134,7 +1063,7 @@ public class AdditiveSecretSharing {
         BigInteger[] cArray = recover(partyID, ciArray, mod, reader, writer);
         // BigInteger c = recover(partyID, ci, mod, reader, writer);
 
-        // 计算 <c=r>
+        // <c=r>
         BigInteger[] riArray = new BigInteger[arrLen];
         Arrays.fill(riArray, 0, arrLen, rTuple.r);
         BigInteger[] resulti = secureEqualSub(partyID, cArray, riArray, triple, rTuple, mod, reader, writer);
@@ -1168,7 +1097,7 @@ public class AdditiveSecretSharing {
         //             : shareConstant(partyID, BigInteger.ONE).subtract(rTuple.rBinary[i]);
         // }
 
-        // 计算 <c=r> = PROD(<\alpha_i>)
+        // <c=r> = PROD(<\alpha_i>)
         // BigInteger resulti = secureProduct(partyID, alphaiArray, triple, mod, reader, writer);
         BigInteger[] resultis = secureProduct(partyID, alphaiArrays, triple, mod, reader, writer);
 
@@ -1224,16 +1153,12 @@ public class AdditiveSecretSharing {
     }
 
     /**
-     * 计算两个点p,q的Minkowski Distance（此函数并未进行开p次根操作）
-     * 需要保证两点的距离不应大于等于mod，否则会被取模变小。
-     * 两点的维度应是一样的
-     * <p>
-     * 当pow小于等于0，代表exp为无穷，即此时计算Chebyshev Distance。
+     *
      *
      * @param partyID
-     * @param pow          Minkowski Distance的阶，其中p小于等于0时时代表Chebyshev Distance
-     * @param pi           点x在C_i上的秘密分享
-     * @param qi           点y在C_i上的秘密分享
+     * @param pow
+     * @param pi
+     * @param qi
      * @param triple
      * @param mod
      * @param inputStream
@@ -1245,14 +1170,14 @@ public class AdditiveSecretSharing {
             BufferedReader reader, PrintWriter writer) throws IOException {
         BigInteger result = BigInteger.ZERO;
 
-        if (pow > 1 && (pow % 2) == 0) { // exp为偶数
-            // 计算z = x - y
+        if (pow > 1 && (pow % 2) == 0) {
+            // z = x - y
             for (int i = 0; i < pi.length; i++) {
                 BigInteger zii = subtract(pi[i], qi[i], mod); // zi[i]
                 BigInteger t = secureExponentiation(partyID, zii, pow, triple, mod, reader, writer);
                 result = add(result, t, mod);
             }
-        } else { // exp为奇数
+        } else {
             for (int i = 0; i < pi.length; i++) {
                 // BigInteger phi1_i = secureComparision(partyID, pi[i], qi[i], triple, mod, reader, writer); // Bool(pi < qi)
                 BigInteger phi1_i = secureComparision(partyID, pi[i].longValue(), qi[i].longValue(), triple, cTuple,
@@ -1270,7 +1195,7 @@ public class AdditiveSecretSharing {
 
                 if (pow <= 0) { // Chebyshev Distance
                     result = secureMax(partyID, result, zii, triple, cTuple, mod, reader, writer);
-                } else { // pow为大于0的奇数
+                } else {
                     BigInteger t = secureExponentiation(partyID, zii, pow, triple, mod, reader, writer);
                     result = add(result, t, mod);
                 }
@@ -1281,19 +1206,14 @@ public class AdditiveSecretSharing {
     }
 
     /**
-     * 在d维空间中的某一维，计算该维度上interval到point的最小距离
-     * 其中：
-     * itervali = [l, u]
-     * qi为该维度上的一个点
-     * <p>
-     * [l, u]和q之间的minimum distance定义如下：
+     *
      * If q < l, the minimum distance is l - q;
      * If u < q, the minimum distance is q - u;
      * If l <= q <= u, the minimum distance is 0.
      *
      * @param partyID      C_i
-     * @param intervali    interval在C_i上的秘密分享
-     * @param qi           q在C_i上的秘密分享
+     * @param intervali
+     * @param qi
      * @param triple
      * @param mod
      * @param inputStream
@@ -1318,17 +1238,12 @@ public class AdditiveSecretSharing {
     }
 
     /**
-     * 计算d维空间上，点q和box的最小距离
-     * 其中：
-     * q = (q_1, ..., q_d)
-     * box = ([l_1, u_1], ..., [l_d, u_d])
-     * <p>
-     * pow为距离的阶，设当pow <= 0时，代表无穷，即Chebyshev Distance
+     *
      *
      * @param partyID      C_i
-     * @param pow          距离的阶
-     * @param boxi         d维box在C_i上的秘密分享
-     * @param qi           d维点q在C_i上的秘密分享
+     * @param pow
+     * @param boxi
+     * @param qi
      * @param triple
      * @param mod
      * @param inputStream
@@ -1346,9 +1261,9 @@ public class AdditiveSecretSharing {
             BigInteger zii = secureMinDistanceFromIntervalToPoint(partyID, boxi[i], qi[i], triple, cTuple, mod, reader,
                     writer);
 
-            if (pow <= 0) { // pow为无穷时
+            if (pow <= 0) {
                 result = secureMax(partyID, zii, result, triple, cTuple, mod, reader, writer);
-            } else { // pow 不为无穷时
+            } else {
                 // <{MD([l_i, u_i], q_i)}^p>
                 zii = secureExponentiation(partyID, zii, pow, triple, mod, reader, writer);
                 result = add(result, zii, mod);

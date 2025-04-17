@@ -9,35 +9,34 @@ import java.util.List;
 
 
 /**
- * 本实验的kd树：
- * 数据点都放在叶子节点中，且每个叶子节点所包含数据点个数都相等。
+ *
  */
 public class KDTreeNode {
 
     public boolean isLeaf;
-    public int minNum; // 区域包含点的个数最小值（不能小于1），少于该值就不再继续划分。
-    public int m; // 维度为m
+    public int minNum;
+    public int m;
     public KDTreePoint[] points = null;
 
-    public KDTreePoint lb; // 区域下界点
-    public KDTreePoint ub; // 区域上界点
+    public KDTreePoint lb;
+    public KDTreePoint ub;
 
     KDTreeNode parent = null;
     KDTreeNode leftChild = null;
     KDTreeNode rightChild = null;
 
     public KDTreeNode(int minNum, int m, KDTreePoint[] points, KDTreeNode parent, BigInteger[] lbData,
-            BigInteger[] ubData) { // 建树
+            BigInteger[] ubData) {
         this.minNum = minNum;
         this.m = m;
         this.parent = parent;
         this.lb = new KDTreePoint(lbData);
         this.ub = new KDTreePoint(ubData);
 
-        if (points.length / 2 < minNum) { // 不再划分
+        if (points.length / 2 < minNum) {
             this.isLeaf = true;
             this.points = points;
-        } else { // 继续划分
+        } else {
             this.isLeaf = false;
             split(points);
         }
@@ -62,7 +61,6 @@ public class KDTreeNode {
     }
 
     private void split(KDTreePoint[] points) {
-        // 找出方差最大的维度进行划分
         int maxDimension = -1;
         BigDecimal maxVar = BigDecimal.ZERO;
         for (int i = 0; i < m; i++) {
@@ -85,7 +83,6 @@ public class KDTreeNode {
         }
 
         final int index = maxDimension;
-        // 将points在maxDimension上由小到大排列。
         Arrays.sort(points, (p1, p2) -> p1.data[index].compareTo(p2.data[index]));
 
         int rigthSize = points.length / 2;

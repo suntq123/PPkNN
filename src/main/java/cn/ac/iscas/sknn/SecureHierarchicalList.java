@@ -18,12 +18,11 @@ import cn.ac.iscas.utils.DataProcessor;
 public class SecureHierarchicalList {
 
     /**
-     * 节点类
-     * 在本实验中，由于涉及到两方安全计算，所以C_1和C_2各持有节点的“一半”的秘密。
+     *
      */
     public static class SecureHierarchicalNode {
 
-        BigInteger[] point = null; // 只有叶子节点才不会为null
+        BigInteger[] point = null;
 
         BigInteger element; // ptr: to a node or a point 
         BigInteger distance; // The distance from this element to the query point.
@@ -98,7 +97,7 @@ public class SecureHierarchicalList {
         this.writer = writer;
 
         this.tree = new ArrayList<>();
-        tree.add(new ArrayList<>()); // 创建L_0，初始化为空表
+        tree.add(new ArrayList<>()); //
     }
 
     private SecureHierarchicalNode getTopNode() {
@@ -106,15 +105,14 @@ public class SecureHierarchicalList {
     }
 
     /**
-     * 返回 [element, distance]
-     * element即为id或者label。
+     *
      * 
      * @return
      * @throws IOException
      */
     private BigInteger[] getMinNodeLabel() throws IOException {
         BigInteger[] sums = new BigInteger[] { BigInteger.ZERO, BigInteger.ZERO };
-        for (SecureHierarchicalNode node : tree.get(0)) { // 遍历L_0的节点
+        for (SecureHierarchicalNode node : tree.get(0)) {
             BigInteger te = multiply(partyID, node.beta, node.element, triple, mod, reader, writer);
             sums[0] = add(sums[0], te, mod);
 
@@ -128,7 +126,7 @@ public class SecureHierarchicalList {
     private BigInteger[] getBetas() {
         BigInteger[] betas = new BigInteger[tree.get(0).size()];
 
-        for (int i = 0; i < tree.get(0).size(); i++) { // 遍历L_0的节点
+        for (int i = 0; i < tree.get(0).size(); i++) {
             betas[i] = tree.get(0).get(i).beta;
         }
 
@@ -149,53 +147,41 @@ public class SecureHierarchicalList {
     }
 
     /**
-     * 批量插入算法
      *
-     * @param data num * 二维数组，[(<ele>,<dist>)_1,...,(<ele>,<dist>)_n]
-     * @param points num * d维数组，[p_1,...,p_n]
-     * @return true：成功；false：失败。
      */
     public void secureInsertion(BigInteger[][] data, BigInteger[][] points) throws IOException {
-        // 插入L_0列表
         for (int i = 0; i < data.length; i++) {
             tree.get(0).add(
                     new SecureHierarchicalNode(points[i], data[i][0], data[i][1], BigInteger.ZERO, BigInteger.ZERO));
         }
 
-        // 填充tree
         int index = 1;
-        int m = (int) Math.ceil(getL() / 2.0); // L_1层的节点数
+        int m = (int) Math.ceil(getL() / 2.0);
         do {
             if (tree.size() < index + 1)
-                tree.add(new ArrayList<>()); // 如果需要构建新层则构建新层
+                tree.add(new ArrayList<>());
 
-            while (tree.get(index).size() < m) // 第index层节点数不足，则插入新节点
-                tree.get(index).add(new SecureHierarchicalNode(BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO)); // 这些值之后会被更新
+            while (tree.get(index).size() < m)
+                tree.get(index).add(new SecureHierarchicalNode(BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO));
 
             if (m == 1)
                 break;
 
-            m = (int) Math.ceil(m / 2.0); // 下一层的节点数
+            m = (int) Math.ceil(m / 2.0);
             index++;
-        } while (true); // 到达顶层
+        } while (true);
 
-        // 从L_1层到顶层更新tree
-        // 注意上面已经填充了节点，此时的l已经是新的l。
         int x = (int) Math.ceil((getL() - data.length + 1) / 2.0), y = (int) Math.ceil(getL() / 2.0);
-        for (int i = 1; i < tree.size(); i++) { // 从L_1到顶层
-            for (int j = x - 1; j < y; j++) { // 论文中此处的下标从1开始，所以此处是x-1到y-1
+        for (int i = 1; i < tree.size(); i++) {
+            for (int j = x - 1; j < y; j++) {
 
-                // C_1, C_2计算第i层第j个节点的distance和它的子节点的alpha和beta
                 int lowerLevel = i - 1; // 第i-1层
                 int leftChild = 2 * j, rightChild = 2 * j + 1;
-                if (tree.get(lowerLevel).size() < 2 * (j + 1)) { // 若只有一个子节点（左节点），那就是最小值
-                    // 更新左节点的alpha
+                if (tree.get(lowerLevel).size() < 2 * (j + 1)) {
                     tree.get(lowerLevel).get(leftChild).alpha = shareConstant(partyID, BigInteger.ONE);
 
-                    // 更新本节点的distance
                     tree.get(i).get(j).distance = tree.get(lowerLevel).get(leftChild).distance;
                 } else {
-                    // 更新左节点的alpha=Bool(左节点的distance < 右节点的distance)
                     // tree.get(lowerLevel).get(leftChild).alpha = secureComparision(partyID,
                     //         tree.get(lowerLevel).get(leftChild).distance,
                     //         tree.get(lowerLevel).get(rightChild).distance, triple, mod, reader, writer);
@@ -204,11 +190,9 @@ public class SecureHierarchicalList {
                             tree.get(lowerLevel).get(rightChild).distance.longValue(), triple, cTuple, mod.longValue(),
                             reader, writer);
 
-                    // 更新右节点的alpha=1-左节点的alpha
                     tree.get(lowerLevel).get(rightChild).alpha = subtract(shareConstant(partyID, BigInteger.ONE),
                             tree.get(lowerLevel).get(leftChild).alpha, mod);
 
-                    // 更新本节点的distance=左右子节点中的最小distance
                     BigInteger d1 = multiply(partyID, tree.get(lowerLevel).get(leftChild).distance,
                             tree.get(lowerLevel).get(leftChild).alpha, triple, mod, reader, writer);
                     BigInteger d2 = multiply(partyID, tree.get(lowerLevel).get(rightChild).distance,
@@ -221,26 +205,20 @@ public class SecureHierarchicalList {
             y = (int) Math.ceil(y / 2.0);
         }
 
-        // 从顶层往下更新
-        // 设置顶层，顶层有且只有一个节点
         index = tree.size() - 1;
         tree.get(index).get(0).alpha = shareConstant(partyID, BigInteger.ONE);
         tree.get(index).get(0).beta = shareConstant(partyID, BigInteger.ONE);
 
-        // 继续往下更新
         updateTreeBeta();
     }
 
     /**
-     * “删除”当前distance最小的节点（L_0中即beta为1的节点）。
-     * 具体方法是将该节点的distance设为MAX，然后更新整棵树的状态。
+     *
      *
      * @throws IOException
      */
     public void secureDeletion() throws IOException {
 
-        // 将L_0中最小distance的节点设置成最大值，即模数-1的一半
-        // 由于只有该节点的beta为1，所以可以采用以下方法更新：
         for (int i = 0; i < tree.get(0).size(); i++) {
             // C_1,C_2计算<dist> = <(1-beta) * dist + beta * MAX>
             BigInteger t1 = subtract(shareConstant(partyID, BigInteger.ONE), tree.get(0).get(i).beta, mod); // 1-beta
@@ -252,11 +230,10 @@ public class SecureHierarchicalList {
             tree.get(0).get(i).distance = add(t1, t2, mod);
         }
 
-        // 从L_1到顶层
         for (int i = 1; i < tree.size(); i++) {
-            int lowerLevel = i - 1; // 第i-1层
+            int lowerLevel = i - 1;
 
-            // C_1,C_2计算<temp1>,<temp2>
+            // C_1,C_2<temp1>,<temp2>
             BigInteger temp1 = BigInteger.ZERO, temp2 = BigInteger.ZERO;
             for (int j = 0; j < tree.get(i).size(); j++) {
                 int leftChild = 2 * j, rightChild = 2 * j + 1;
@@ -265,7 +242,6 @@ public class SecureHierarchicalList {
                         triple, mod, reader, writer);
                 temp1 = add(temp1, t1, mod);
 
-                // 没有右子节点设为0，否则就计算。
                 BigInteger t2 = (tree.get(lowerLevel).size() < 2 * (j + 1)) ? BigInteger.ZERO
                         : multiply(partyID, tree.get(lowerLevel).get(rightChild).distance, tree.get(i).get(j).beta,
                                 triple, mod, reader, writer);
@@ -273,21 +249,19 @@ public class SecureHierarchicalList {
                 temp2 = add(temp2, t2, mod);
             }
 
-            // C_1,C_2计算alpha_{temp}=Bool(temp1 < temp2)
+            // C_1,C_2alpha_{temp}=Bool(temp1 < temp2)
             // BigInteger alphaTemp = secureComparision(partyID, temp1, temp2, triple, mod, reader, writer);
             BigInteger alphaTemp = secureComparision(partyID, temp1.longValue(), temp2.longValue(), triple, cTuple,
                     mod.longValue(), reader, writer);
 
-            // 更新子节点的alpha和自己的distance
             for (int j = 0; j < tree.get(i).size(); j++) {
                 int leftChild = 2 * j, rightChild = 2 * j + 1;
 
-                if (tree.get(lowerLevel).size() < 2 * (j + 1)) { // 如果没有右节点，则左节点就是最小值
+                if (tree.get(lowerLevel).size() < 2 * (j + 1)) {
                     tree.get(lowerLevel).get(leftChild).alpha = shareConstant(partyID, BigInteger.ONE);
                     tree.get(i).get(j).distance = tree.get(lowerLevel).get(leftChild).distance;
                 } else {
-                    // C_1,C_2计算左子节点alpha，然后计算右子节点的alpha
-                    BigInteger t1 = subtract(shareConstant(partyID, BigInteger.ONE), tree.get(i).get(j).beta, mod); // 计算1-beta
+                    BigInteger t1 = subtract(shareConstant(partyID, BigInteger.ONE), tree.get(i).get(j).beta, mod); // 1-beta
                     t1 = multiply(partyID, t1, tree.get(lowerLevel).get(leftChild).alpha, triple, mod, reader,
                             writer); // (1-beta) * alpha
 
@@ -298,7 +272,6 @@ public class SecureHierarchicalList {
                     tree.get(lowerLevel).get(rightChild).alpha = subtract(shareConstant(partyID, BigInteger.ONE),
                             tree.get(lowerLevel).get(leftChild).alpha, mod);
 
-                    // C_1,C_2更新该节点的distance
                     t1 = multiply(partyID, tree.get(lowerLevel).get(leftChild).distance,
                             tree.get(lowerLevel).get(leftChild).alpha,
                             triple, mod, reader, writer);
@@ -310,17 +283,11 @@ public class SecureHierarchicalList {
             }
         }
 
-        // 继续往下更新
         updateTreeBeta();
     }
 
     /**
-     * Rectangle类保存low和high两个d维点，
-     * 该方法将这两个d维点以d*2数组的形式返回：
-     * 将
-     * low=(l_1,...,l_d), high=(h_1,...,h_d)
-     * 转化成
-     * data={(l_1,h_1),...,(h_1,h_d)}
+     *
      *
      * @param rectangle
      * @return
@@ -347,9 +314,9 @@ public class SecureHierarchicalList {
     // }
 
     /**
-     * 返回值：{([id], [distance], [p])_1, ..., ([id], [distance], [p])_num}
+     * {([id], [distance], [p])_1, ..., ([id], [distance], [p])_num}
      * 
-     * p 为 point，维度为d
+     * p point
      */
     public static List<BigInteger[]> secureLinearKNNSearch(PartyID partyID, List<DataProcessor.Entry> entries,
             int k, Point point, int pow, MultiplicationTriple triple, ComparisonTuple cTuple,
@@ -358,7 +325,6 @@ public class SecureHierarchicalList {
 
         SecureHierarchicalList ssi = new SecureHierarchicalList(partyID, triple, cTuple, mod, reader, writer);
 
-        // 计算各点与查询点的距离，然后插入SSi
         int entryNumber = entries.size();
         BigInteger[][] entryData = new BigInteger[entryNumber][2];
         BigInteger[][] pointsData = new BigInteger[entryNumber][];
@@ -413,7 +379,6 @@ public class SecureHierarchicalList {
 
         SecureHierarchicalList ssi = new SecureHierarchicalList(partyID, triple, cTuple, mod, reader, writer);
 
-        // 计算各点与查询点的距离，然后插入SSi
         int bNum = bucketsSecret.size();
         int bSize = bucketsSecret.get(0).getEntries().size();
         int d = point.getDimension();
@@ -425,10 +390,10 @@ public class SecureHierarchicalList {
             BigInteger distancei = secureMinDistanceFromBoxToPoint(partyID, pow, getRectangleData(mbr), point.getData(),
                     triple, cTuple, mod, reader, writer);
 
-            entryData[j][0] = BigInteger.valueOf(j); // 暂时用j作为id
+            entryData[j][0] = BigInteger.valueOf(j);
             entryData[j][1] = distancei;
 
-            pointsData[j] = null; // 因为是bucket，所以point为null
+            pointsData[j] = null;
         }
         ssi.secureInsertion(entryData, pointsData);
 
@@ -436,7 +401,6 @@ public class SecureHierarchicalList {
         List<DataProcessor.Entry> tpi = new ArrayList<>();
         BigInteger tmdi = shareConstant(partyID, MAX_VALUE);
         while (true) {
-            // 没存点的数据，由于只是测速，就简单了事了。
             BigInteger[] betas = ssi.getBetas();
 
             BigInteger[] idsi = new BigInteger[bSize];
@@ -501,14 +465,12 @@ public class SecureHierarchicalList {
         SecureHierarchicalList ss1 = new SecureHierarchicalList(partyID, triple, cTuple, mod, reader, writer);
         SecureHierarchicalList ss2 = new SecureHierarchicalList(partyID, triple, cTuple, mod, reader, writer);
 
-        // 将(<0>, <0>)加入SS1，(<.>, <MAX>)加入SS2，保证必是先检索T[0]
-
         // ss1.secureInsertion(new BigInteger[][] {
         //         { BigInteger.ZERO, mod.subtract(BigInteger.ONE).divide(BigInteger.TWO).subtract(BigInteger.TWO) } });
         // ss2.secureInsertion(
         //         new BigInteger[][] { { BigInteger.ZERO, mod.subtract(BigInteger.ONE).divide(BigInteger.TWO) } });
         // ss1.secureInsertion(new int[][] { { 0, (mod - 1) / 2 - 2 } });   
-        // ss2.secureInsertion(new int[][] { { 0, (mod - 1) / 2 } });       // C1和C2相加起来等于MAX
+        // ss2.secureInsertion(new int[][] { { 0, (mod - 1) / 2 } });
 
         ss1.secureInsertion(new BigInteger[][] {
                 { BigInteger.ZERO, shareConstant(partyID, BigInteger.ZERO) } },
@@ -522,20 +484,16 @@ public class SecureHierarchicalList {
         int count = 0;
         while (count < k) {
 
-            // C_1和C_2计算 Bool(SS1顶部节点distance, SS2顶部节点distance)
             // BigInteger taui = secureComparision(partyID, ss1.getTopNode().distance, ss2.getTopNode().distance,
             //         triple, mod, reader, writer);
             BigInteger taui = secureComparision(partyID, ss1.getTopNode().distance.longValue(),
                     ss2.getTopNode().distance.longValue(), triple, cTuple, mod.longValue(), reader, writer);
 
-            // 恢复tau
             BigInteger tau = recover(partyID, taui, mod, reader, writer);
             // System.out.println("tau = " + tau);
 
-            // tau 不是0就是1
-            if (tau.equals(BigInteger.ONE)) { // tau=1，说明SS1顶部节点distance更小
+            if (tau.equals(BigInteger.ONE)) {
 
-                // C_1和C_2计算并恢复T表中下一个最小节点的label
                 BigInteger labeli = ss1.getMinNodeLabel()[0];
                 BigInteger labelb = recover(partyID, labeli, mod, reader, writer);
 
@@ -543,14 +501,13 @@ public class SecureHierarchicalList {
                 boolean isLeaf = arrayTSecret.get(label).getEntries().get(0).getLeafFlag();
 
                 int entryNumber = arrayTSecret.get(label).getEntries().size();
-                if (!isLeaf) { // 不是叶子节点，则从ss1中删除该节点，将该节点的叶子节点加入ss1。
+                if (!isLeaf) {
 
                     BigInteger[][] entryData = new BigInteger[entryNumber][2];
                     BigInteger[][] pointsData = new BigInteger[entryNumber][];
                     for (int j = 0; j < entryNumber; j++) {
                         DataProcessor.Entry entry = arrayTSecret.get(label).getEntries().get(j);
 
-                        // C_1和C_2计算entry的MBR和point的distance
                         BigInteger[][] boxi = getRectangleData(entry.getRectangle());
 
                         BigInteger distancei = secureMinDistanceFromBoxToPoint(partyID, pow, boxi, pointData, triple,
@@ -563,20 +520,16 @@ public class SecureHierarchicalList {
                         pointsData[j] = null;
                     }
 
-                    // ss1 调用secure deletion进行更新
-                    // 需要在插入前更新，否则会把新的最小值“删除”
                     ss1.secureDeletion();
 
-                    // 插入SS1
                     ss1.secureInsertion(entryData, pointsData);
-                } else { // 是叶子节点，则将该节点的叶子节点加入ss2，并从ss1中删除该节点。
+                } else {
 
                     BigInteger[][] entryData = new BigInteger[entryNumber][2];
                     BigInteger[][] pointsData = new BigInteger[entryNumber][];
                     for (int j = 0; j < entryNumber; j++) {
                         DataProcessor.Entry entry = arrayTSecret.get(label).getEntries().get(j);
 
-                        // C_1和C_2计算entry的point和待查询的point的distance
                         BigInteger distancei = secureMinkowskiDistance(partyID, pow, entry.getPoint().getData(),
                                 pointData, triple, cTuple, mod, reader, writer);
 
@@ -589,14 +542,12 @@ public class SecureHierarchicalList {
 
                     ss2.secureInsertion(entryData, pointsData);
 
-                    // ss1 调用secure deletion进行更新
                     ss1.secureDeletion();
                 }
-            } else { // tau=0，说明SS2顶部节点distance更小
+            } else {
                 result.add(ss2.getMinNodeLabel());
                 count++;
 
-                // ss2调用secure deletion进行更新
                 ss2.secureDeletion();
             }
         }

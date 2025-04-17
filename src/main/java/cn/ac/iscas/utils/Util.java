@@ -22,7 +22,7 @@ public class Util {
     }
 
     public static double log2(double N) {
-        return Math.log(N) / Math.log(2);//Math.log的底为e
+        return Math.log(N) / Math.log(2);//
     }
 
     public static long modOperation(long x, long mod) {
@@ -30,7 +30,7 @@ public class Util {
     }
 
     /**
-     * 将十进制的x转化为二进制，最高位添加一个比特作为符号位，则长度为bitLength+1。
+     *
      * 
      * @param x
      * @param bitLength
@@ -81,7 +81,7 @@ public class Util {
     }
 
     public static BigInteger[] decimalToBinaryV2(BigInteger x, int bitLength) {
-        String xBinaryStr = x.toString(2); // LGB在字符串低位，需要反转
+        String xBinaryStr = x.toString(2); //
         BigInteger[] xBinary = new BigInteger[bitLength];
         for (int i = 0; i < bitLength; i++) {
             if (i < xBinaryStr.length()) {
@@ -98,7 +98,7 @@ public class Util {
     }
 
     /**
-     * 转成二进制：LGB在数组低位
+     *
      */
     public static long[] decimalToBinary(long x, int s) {
         String lambdaBinaryStr = Long.toBinaryString(x);
@@ -199,11 +199,6 @@ public class Util {
         int num = x.length;
         BigInteger[] y;
 
-        // 开线程需要消耗额外的时间（大概几十ms？）
-        // 对于少量数据，先传后读的速度会快很多。
-        // 但若阈值设置不恰当，可能会出现需要传太多，传不完一直waiting的情况。
-        // 之前测试时发现num=256000左右出现waiting，但是可能跟单个数据大小也有关。
-        // 由于实验中数据量都较大，所以就统一使用多线程。
         // if (num < 100000) {
         //     writeBigIntegers(x, writer);
         //     y = readBigIntegers(num, reader);
@@ -370,7 +365,7 @@ public class Util {
     // }
 
     /**
-    * char类型转int型，只适用于['0',...,'9']
+    *
     *
     * @param a
     * @return

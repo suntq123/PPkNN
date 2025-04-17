@@ -19,7 +19,7 @@ public class TestComparisionUser {
         int portC1 = 8004;
         int portC2 = 8005;
 
-        // 0-最开始的SC ; 1- ; 2-secureComparsion V2; 3-secureComparsion V2 S; 4-secureEqual ; 5-secureEqual S
+        // 0- ; 1- ; 2-secureComparsion V2; 3-secureComparsion V2 S; 4-secureEqual ; 5-secureEqual S
         int testType = 2;
 
         int testNumber = 10000;
@@ -27,7 +27,7 @@ public class TestComparisionUser {
         int l = -1;
         if (testType == 2 || testType == 3) {
             // dataBound = mod.divide(BigInteger.TWO).subtract(BigInteger.ONE);
-            l = dataLength + 2;     // 为保证数值总小于模数的一半，则模数的长度至少为数值的长度+2
+            l = dataLength + 2;
         } else if (testType == 0 || testType == 4 || testType == 5) {
             // dataBound = mod;
             l = dataLength + 1;

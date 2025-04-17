@@ -21,8 +21,8 @@ import cn.ac.iscas.utils.RunningTimer;
 import cn.ac.iscas.utils.Util;
 
 class SplitGroup {
-    List<Integer> indexs; // 组内桶的id
-    BigInteger[][] points; // 本组中alpha=1的桶的点
+    List<Integer> indexs;
+    BigInteger[][] points;
 
     public SplitGroup() {
         this.indexs = new ArrayList<>();
@@ -44,7 +44,7 @@ public class Paillier {
         public BigInteger n;
         // public BigInteger g;
 
-        public BigInteger hs; // 此处s取1
+        public BigInteger hs;
 
         public BigInteger nSqure; // n^2
 
@@ -110,10 +110,9 @@ public class Paillier {
     public static BigInteger a;
 
     /**
-     * 此处提供的length是n的长度
-     * 则能够加密的数据m的长度也为length（实际上更小，0 <= m < n）
+     *
      * 
-     * 则p和q的长度为length/2
+     *
      * 
      * @param length
      */
@@ -150,8 +149,7 @@ public class Paillier {
     }
 
     /**
-     * 此处提供的length是n的长度
-     * 则p和q的长度为length/2
+     *
      */
     private void keyGenerate() {
         // BigInteger p = BigInteger.probablePrime(length / 2, random);
@@ -191,7 +189,6 @@ public class Paillier {
     }
 
     /**
-     * 使用公钥(n, g)对明文m进行加密。
      * 
      * @param publicKey
      * @param m
@@ -199,8 +196,8 @@ public class Paillier {
      */
 
     public static BigInteger encrypt(PaillierPublicKey publicKey, BigInteger m) {
-        // 要求 0 <= m < n
-        if (m.compareTo(BigInteger.ZERO) < 0 || m.compareTo(publicKey.n) >= 0) { // 若m < 0或m >= n，返回null
+        // 0 <= m < n
+        if (m.compareTo(BigInteger.ZERO) < 0 || m.compareTo(publicKey.n) >= 0) {
             return null;
         }
 
@@ -231,8 +228,7 @@ public class Paillier {
     public static BigInteger encrypt(PaillierPrivateKey privateKey, BigInteger m) {
         PaillierPublicKey publicKey = privateKey.publicKey;
 
-        // 要求 0 <= m < n
-        if (m.compareTo(BigInteger.ZERO) < 0 || m.compareTo(publicKey.n) >= 0) { // 若m < 0或m >= n，返回null
+        if (m.compareTo(BigInteger.ZERO) < 0 || m.compareTo(publicKey.n) >= 0) {
             return null;
         }
 
@@ -252,17 +248,14 @@ public class Paillier {
 
     public static BigInteger crtModPow(BigInteger a, BigInteger b, PaillierPrivateKey key) {
 
-        // 映射到Z_{p^2}
         BigInteger ap = a.mod(key.pSqure); // a_p = a mod p^2
         BigInteger bp = b.mod(key.phiPSqure); // b_p = b mod Phi(p^2), where Phi(p^2) = (p - 1)^2
         BigInteger xp = ap.modPow(bp, key.pSqure); // x_p = a_p^{b_p}
 
-        // 映射到Z_{q^2}
         BigInteger aq = a.mod(key.qSqure); // a_q = a mod q^2
         BigInteger bq = b.mod(key.phiQSqure); // b_q = b mod Phi(q^2), where Phi(q^2) = (q - 1)^2
         BigInteger xq = aq.modPow(bq, key.qSqure); // x_q = a_q^{b_q}
 
-        // 聚合回Z_{n^2}
         BigInteger x = xp.multiply(key.qSqureModInversePSqure).multiply(key.qSqure).mod(key.publicKey.nSqure)
                 .add(xq.multiply(key.pSqureModInverseQSqure).multiply(key.pSqure)).mod(key.publicKey.nSqure);
 
@@ -270,7 +263,6 @@ public class Paillier {
     }
 
     /**
-     * 使用私钥(lambda, mu)以及公钥中的n对密文c进行解密。
      * 
      * @param privateKey
      * @param c
@@ -279,7 +271,7 @@ public class Paillier {
     public static BigInteger decrypt(PaillierPrivateKey privateKey, BigInteger c) {
 
         // m = L(c^lambda mod n^2) * mu mod n
-        // 其中，L(x) = (x-1)/n
+        // L(x) = (x-1)/n
         BigInteger t = crtModPow(c, privateKey.lambda, privateKey);
         // BigInteger t = c.modPow(privateKey.lambda, privateKey.publicKey.nSqure);
         BigInteger l = t.subtract(BigInteger.ONE).divide(privateKey.publicKey.n);
@@ -289,7 +281,7 @@ public class Paillier {
     }
 
     /**
-     * 同态加法性质：给定密文与密文
+     *
      * 
      * D(C1 * C2 mod n^2) = D(E(m1, r1) * E(m2, r2) mod n^2) = m1 + m2 mod n
      * 
@@ -303,7 +295,7 @@ public class Paillier {
     }
 
     /**
-     * 同态加法性质：给定密文与明文
+     *
      * 
      * D(C * g^m2 mod n^2) = D(E(m1, r1) * g^m2 mod n^2) = m1 + m2 mod n
      * 
@@ -313,8 +305,8 @@ public class Paillier {
      * @return
      */
     public static BigInteger homomorphicAddition(BigInteger c, BigInteger m, PaillierPublicKey publicKey) {
-        // 要求 0 <= m < n
-        if (m.compareTo(BigInteger.ZERO) < 0 || m.compareTo(publicKey.n) >= 0) { // 若m < 0或m >= n，返回null
+        //  0 <= m < n
+        if (m.compareTo(BigInteger.ZERO) < 0 || m.compareTo(publicKey.n) >= 0) {
             return null;
         }
 
@@ -325,7 +317,7 @@ public class Paillier {
     }
 
     /**
-     * 同态减法性质：给定密文与密文
+     *
      * 
      * D(C1 * C2^-1 mod n^2) = D(E(m1, r1) * E(m2, r2)^-1 mod n^2) = m1 - m2 mod n
      * 
@@ -340,7 +332,7 @@ public class Paillier {
     }
 
     /**
-     * 同态减法性质：给定密文与明文
+     *
      * 
      * D(C * g^-m2 mod n^2) = D(E(m1, r1) * g^-m2 mod n^2) = m1 - m2 mod n
      * 
@@ -358,7 +350,6 @@ public class Paillier {
     }
 
     /**
-     * 同态乘法性质：给定密文与明文
      * 
      * D(c1^m2 mod n^2) = D(E(m1, r1)^m2 mod n^2) = m1 * m2 mod n
      * 
@@ -372,7 +363,7 @@ public class Paillier {
     }
 
     /**
-     * 明文状态下的data packing
+     *
      * 
      * @param datas
      * @param sigma
@@ -393,7 +384,7 @@ public class Paillier {
     }
 
     /**
-     * 明文状态下的data unpacking
+     *
      * 
      * @param x
      * @param m
@@ -413,7 +404,7 @@ public class Paillier {
     }
 
     /**
-     * 密文状态下的data packing
+     *
      * 
      * @param datas
      * @param sigma
@@ -436,7 +427,7 @@ public class Paillier {
     }
 
     /**
-     * 密文状态下的data unpacking
+     *
      * 
      * @param ex
      * @param m
@@ -451,12 +442,12 @@ public class Paillier {
     }
 
     /**
-     * 基于Paillier的两方安全计算乘法。
+     *
      * 
-     * 来源：Elmehdwi Y, Samanthula B K, Jiang W. Secure k-nearest neighbor query over encrypted data
+     * Elmehdwi Y, Samanthula B K, Jiang W. Secure k-nearest neighbor query over encrypted data
      * in outsourced environments[C]//2014 IEEE 30th International Conference on Data Engineering. IEEE, 2014: 664-675. 
      * 
-     * P1拥有E(a)，E(b)，P2拥有私钥，要求计算E(a*b)并保存在P1中。
+     *
      * 
      * @param args
      * @throws IOException
@@ -572,7 +563,7 @@ public class Paillier {
     /**
      * Enhanced Secure Squared Euclidean Distance (ESSED) protocol
      * 
-     * 来源：Kim H I, Kim H J, Chang J W. A secure kNN query processing algorithm using homomorphic encryption
+     * Kim H I, Kim H J, Chang J W. A secure kNN query processing algorithm using homomorphic encryption
      *  on outsourced database[J]. Data & knowledge engineering, 2019, 123: 101602.
      * @throws IOException
      */
@@ -586,7 +577,7 @@ public class Paillier {
 
         BigInteger[] r = new BigInteger[m];
         // Random random = new SecureRandom();
-        for (int i = 0; i < m; i++) { // r的范围取sigma的长度，因为要data packing，所以不能取太大
+        for (int i = 0; i < m; i++) {
             r[i] = new BigInteger(sigma, random);
             // r[i] = sigmaR;
         }
@@ -710,9 +701,9 @@ public class Paillier {
     /**
      * Secure Bit-Not (SBN) protocol
      * 
-     * LSB在数组的低位。
+     *
      * 
-     * 来源：Kim H I, Kim H J, Chang J W. A secure kNN query processing algorithm using homomorphic encryption
+     * Kim H I, Kim H J, Chang J W. A secure kNN query processing algorithm using homomorphic encryption
      *  on outsourced database[J]. Data & knowledge engineering, 2019, 123: 101602.
      * 
      * @param ea
@@ -729,7 +720,7 @@ public class Paillier {
 
         String s = x.toString(2);
         int t = dataLength - s.length();
-        for (int i = 0; i < t; i++) { // 前面补零
+        for (int i = 0; i < t; i++) {
             result[i] = encrypt(publicKey, BigInteger.ZERO);
         }
 
@@ -743,7 +734,7 @@ public class Paillier {
     /**
      * Secure Compare (SCMP) protocol 
      * 
-     * 来源：Kim H I, Kim H J, Chang J W. A secure kNN query processing algorithm using homomorphic encryption
+     * Kim H I, Kim H J, Chang J W. A secure kNN query processing algorithm using homomorphic encryption
      * on outsourced database[J]. Data & knowledge engineering, 2019, 123: 101602.
      * 
      * @return
@@ -1018,7 +1009,7 @@ public class Paillier {
     /**
      * Secure Bit-Decomposition (SBD) protocol
      * 
-     * 来源：Samanthula B K K, Chun H, Jiang W. An efficient and probabilistic secure bit-decomposition[C]
+     * Samanthula B K K, Chun H, Jiang W. An efficient and probabilistic secure bit-decomposition[C]
      * //Proceedings of the 8th ACM SIGSAC symposium on Information, computer and communications security. 2013: 541-546.
      * 
      * @param ex
@@ -1138,7 +1129,7 @@ public class Paillier {
     }
 
     /**
-     * 来源：Kim H I, Kim H J, Chang J W. A secure kNN query processing algorithm using homomorphic encryption
+     * Kim H I, Kim H J, Chang J W. A secure kNN query processing algorithm using homomorphic encryption
      * on outsourced database[J]. Data & knowledge engineering, 2019, 123: 101602.
      * 
      * @return
@@ -1269,13 +1260,7 @@ public class Paillier {
 
     /**
     * 
-    * 基于Paillier的
-    * 在d维空间中的某一维，计算该维度上interval到point的最小欧式距离
-    * 其中：
-    * itervali = [l, u]
-    * qi为该维度上的一个点
-    * <p>
-    * [l, u]和q之间的minimum distance定义如下：
+    *
     * If q < l, the minimum distance is l - q;
     * If u < q, the minimum distance is q - u;
     * If l <= q <= u, the minimum distance is 0.
@@ -1383,8 +1368,7 @@ public class Paillier {
     }
 
     /**
-    * 参考迟老师论文的SMDC算法，修改成基于Paillier：
-    * 计算d维空间上，点p和box=[lb, ub]的最小欧式距离
+    *
     * @return
     */
     public static BigInteger secureMinDistanceFromBoxToPointC1(int dataLength, BigInteger[] ep, BigInteger[] elb,
@@ -1473,15 +1457,10 @@ public class Paillier {
     }
 
     /**
-     * SMIN算法
-     * 
-     * 输入：加密的点列表，以及各个点对应的距离（密文）。
-     * 如：
+     *
      * E(p_1), E(p_2), ..., E(p_n)
      * E(d_1), E(d_2), ..., E(d_n)
-     * 
-     * 输出：
-     * d_i最小的E(p_i)
+     *
      * 
      * @return
      * @throws IOException
@@ -1612,7 +1591,7 @@ public class Paillier {
     }
 
     /**
-     * 检索前k小距离的点
+     *
      * 
      * @param epList
      * @param edList
@@ -1628,20 +1607,18 @@ public class Paillier {
 
         // RunningTimer timer = new RunningTimer(RunningTimer.TimeType.MS);
         // System.out.println("Start: " + timer.cut() + " ms");
-        BigInteger maxVal = BigInteger.TWO.pow(dataLength * 2).subtract(BigInteger.ONE); // 距离的最大值
+        BigInteger maxVal = BigInteger.TWO.pow(dataLength * 2).subtract(BigInteger.ONE);
 
-        int num = epList.length; // 总共的点数
-        int m = epList[0].length; // 点的维度
+        int num = epList.length;
+        int m = epList[0].length;
         BigInteger[][] result = new BigInteger[k][m];
         for (int i = 0; i < k; i++) {
-            // 本轮的p_min
             result[i] = secureMinDistancePointC1(epList, edList, dataLength + 1, publicKey, reader, writer); // 由于添加了最大值，所以在SBD时，需要把dataLength+1
             // System.out.println("secureMinDistancePointC1: " + timer.cut() + " ms");
 
             if (i == k - 1)
                 break;
 
-            // 令所有点减去当前p_min，并用随机数盲化
             BigInteger[][] tepList = new BigInteger[num][m];
             for (int j = 0; j < num; j++) {
                 for (int l = 0; l < m; l++) {
@@ -1651,9 +1628,7 @@ public class Paillier {
                     tepList[j][l] = homomorphicMultiplication(tepList[j][l], r, publicKey.nSqure);
                 }
             }
-            // System.out.println("令所有点减去当前p_min，并用随机数盲化: " + timer.cut() + " ms");
 
-            // 将epList发送给C2
             Util.writeBigIntegers(tepList, writer);
 
             BigInteger[] eAlphas = Util.readBigIntegers(num, reader);
@@ -1701,16 +1676,15 @@ public class Paillier {
     }
 
     /**
-    * 检索第k小的值
     * 
     */
     public static BigInteger secureMinKthC1(int k, BigInteger[] exs, int dataLength,
             PaillierPublicKey publicKey, BufferedReader reader, PrintWriter writer) throws IOException {
 
-        BigInteger maxVal = BigInteger.TWO.pow(dataLength); // x的范围
+        BigInteger maxVal = BigInteger.TWO.pow(dataLength);
 
         int num = exs.length;
-        BigInteger[][] epList = new BigInteger[num][1]; // 把exs复制一份，当作eplist
+        BigInteger[][] epList = new BigInteger[num][1];
         for (int i = 0; i < num; i++) {
             epList[i][0] = exs[i];
         }
@@ -1722,7 +1696,6 @@ public class Paillier {
             if (i == k - 1)
                 break;
 
-            // 令所有点减去当前p_min，并用随机数盲化
             BigInteger[][] tepList = new BigInteger[num][1];
             for (int j = 0; j < num; j++) {
                 tepList[j][0] = homomorphicSubstraction(epList[j][0], result[0], publicKey.nSqure);
@@ -1730,7 +1703,6 @@ public class Paillier {
                 tepList[j][0] = homomorphicMultiplication(tepList[j][0], r, publicKey.nSqure);
             }
 
-            // 将epList发送给C2
             Util.writeBigIntegers(tepList, writer);
 
             BigInteger[] eAlphas = Util.readBigIntegers(num, reader);
@@ -1776,16 +1748,6 @@ public class Paillier {
     /**
      * secure read
      * 
-     * 输入：都是密文形式
-     *  桶：    B_1,     ...,   B_{bNum}
-     *  alpha： alpha_1, ..., alpha_{bNum}
-     * 
-     * 其中：
-     * B_i包含着bSize个点，每个点维度为m，各维度的值域为[0, 2^dataLength)。
-     * 
-     * 输出：
-     * 所有alpha_i = 1的桶的点的集合。
-     * 
      * @param eBuckets
      * @param eAlphas
      * @param publicKey
@@ -1797,12 +1759,11 @@ public class Paillier {
     public static BigInteger[][] secureReadC1(BigInteger[][][] eBuckets, BigInteger[] eAlphas,
             PaillierPublicKey publicKey, BufferedReader reader, PrintWriter writer) throws IOException {
 
-        int bNum = eBuckets.length; // 桶的个数
-        int bSize = eBuckets[0].length; // 桶的大小（所有桶都一样），即桶内点的数量
-        int m = eBuckets[0][0].length; // 点的维度，点的数值范围是[0, 2^dataLength)
+        int bNum = eBuckets.length;
+        int bSize = eBuckets[0].length;
+        int m = eBuckets[0][0].length;
 
-        // 对所有点随机化
-        BigInteger[][][] teBuckets = new BigInteger[bNum][bSize][m]; // 盲化后的eBuckets
+        BigInteger[][][] teBuckets = new BigInteger[bNum][bSize][m];
         BigInteger[][][] r = new BigInteger[bNum][bSize][m];
         for (int i = 0; i < bNum; i++) {
             for (int j = 0; j < bSize; j++) {
@@ -1828,11 +1789,11 @@ public class Paillier {
             groups[i] = new SplitGroup(indexs, gPoints);
         }
 
-        BigInteger[][] result = new BigInteger[gNum * bSize][m]; // 所有alpha=1的桶的点的集合
-        int count = 0; // result的点下标
+        BigInteger[][] result = new BigInteger[gNum * bSize][m];
+        int count = 0;
         for (SplitGroup group : groups) {
             List<Integer> indexs = group.indexs;
-            BigInteger[][] eBucket = group.points; // 桶里有bSize个点，每个点有m个维度
+            BigInteger[][] eBucket = group.points;
 
             for (int i = 0; i < bSize; i++) {
                 for (int j = 0; j < m; j++) {
@@ -1859,7 +1820,7 @@ public class Paillier {
 
         PaillierPublicKey publicKey = privateKey.publicKey;
 
-        List<SplitGroup> groups = new ArrayList<>(); // alpha=1的桶的个数，不会超过bNum/2
+        List<SplitGroup> groups = new ArrayList<>();
         boolean[] isUsed = new boolean[bNum];
         Arrays.fill(isUsed, false);
         for (int i = 0; i < bNum; i++) {
@@ -1903,8 +1864,6 @@ public class Paillier {
             isUsed[i] = true;
         }
 
-        // 此时每个group的indexs中的第一个是alpha=1的桶的下标；
-        // 应该要打乱各个group的indexs
         for (SplitGroup group : groups) {
             Collections.shuffle(group.indexs, random);
         }
@@ -1919,7 +1878,7 @@ public class Paillier {
     }
 
     /**
-     * 计算ebs1[i] XOR ebs2[i]
+     * ebs1[i] XOR ebs2[i]
      * 
      * E(b1 XOR b2) = E(b1 + b2 - 2 * b1 * b2)
      * 
@@ -1959,7 +1918,6 @@ public class Paillier {
     }
 
     /**
-     * C1求解CMP矩阵，累加各行，然后发送给C2，C2解密，令第i为1，其他为0。
      * 
      * @param k
      * @param exs
@@ -2089,13 +2047,12 @@ public class Paillier {
     }
 
     /**
-     * 目前还有点问题？越界问题已解决
      * 
      */
     public static BigInteger[][] mySecureMinDistanceKPointC1(int k, BigInteger[][] epList, BigInteger[] edList,
             int dataLength, PaillierPublicKey publicKey, BufferedReader reader, PrintWriter writer) throws IOException {
 
-        int disBitLength = dataLength * 2 + 1; // 欧式距离的范围, 加1是为了防止越界
+        int disBitLength = dataLength * 2 + 1;
 
         RunningTimer timer = new RunningTimer(RunningTimer.TimeType.MS);
         System.out.println("Start: " + timer.cut() + " ms");
@@ -2347,9 +2304,9 @@ public class Paillier {
         RunningTimer timer = new RunningTimer(RunningTimer.TimeType.MS);
         System.out.println("Start: " + timer.cut() + " ms");
 
-        int bNum = eBuckets.length; // 桶的个数
-        // int bSize = eBuckets[0].length; // 桶的大小
-        int m = eBuckets[0][0].length; // 维度
+        int bNum = eBuckets.length;
+        // int bSize = eBuckets[0].length;
+        int m = eBuckets[0][0].length;
         int disBitLength = dataLength * 2;
         int sigma = dataLength + 40;
 
@@ -2394,7 +2351,6 @@ public class Paillier {
         }
         System.out.println("ePointSet distribute: " + timer.cut() + " ms");
 
-        // 使用SPE计算桶是否包含点q
         // BigInteger[] eAlphas = new BigInteger[bNum];
         // for (int i = 0; i < bNum; i++) {
         //     eAlphas[i] = securePointEnclosureC1(eqBD, elbBDs[i], eubBDs[i], publicKey, reader, writer);
@@ -2406,13 +2362,11 @@ public class Paillier {
         BigInteger[] eAlphas = securePointEnclosureSC1(eqBDs, elbBDs, eubBDs, publicKey, reader, writer);
         System.out.println("SPE: " + timer.cut() + " ms");
 
-        // secure read, 可能有多个桶包含点q
         BigInteger[][] eBPoints = secureReadC1(eBuckets, eAlphas, publicKey, reader, writer); // 此处不可能为null
         System.out.println("First SREAD: " + timer.cut() + " ms");
 
         Util.writeInt(eBPoints.length, writer);
 
-        // 计算返回点与点q的距离
         // BigInteger[] eDistances = new BigInteger[eBPoints.length];
         // for (int i = 0; i < eBPoints.length; i++) {
         //     eDistances[i] = enhancedSecureSquaredEuclideanDistanceC1(eBPoints[i], eq, sigma, publicKey, reader, writer);
@@ -2425,12 +2379,10 @@ public class Paillier {
                 writer);
         System.out.println("First ESSED: " + timer.cut() + " ms");
 
-        // 获取第k小的distance，有可能桶中的点少于k？先不管了，假设桶的大小>k
         BigInteger ekthD = secureMinKthC1(k, eDistances, disBitLength, publicKey, reader, writer);
         // BigInteger ekthD = mySecureMINKthC1(k, eDistances, disBitLength, publicKey, reader, writer);
         System.out.println("Kth distance: " + timer.cut() + " ms");
 
-        // 计算所有桶和q的distance
         // BigInteger[] eBQDistances = new BigInteger[bNum];
         // for (int i = 0; i < bNum; i++) {
         //     eBQDistances[i] = secureMinDistanceFromBoxToPointC1(dataLength, eq, elbs[i], eubs[i], publicKey, reader,
@@ -2444,7 +2396,6 @@ public class Paillier {
                 writer);
         System.out.println("box to point distance: " + timer.cut() + " ms");
 
-        // 将所有distance与k th distance比较
         // BigInteger[] eBetas = new BigInteger[bNum];
         BigInteger[] eKthDisBD = secureBitDecompositionC1(ekthD, disBitLength, publicKey, reader, writer);
         BigInteger[][] eKthDisBDs = new BigInteger[bNum][];
@@ -2459,7 +2410,6 @@ public class Paillier {
         BigInteger[] eBetas = secureCompareSC1(eDsBD, eKthDisBDs, publicKey, reader, writer);
         System.out.println("distance compare: " + timer.cut() + " ms");
 
-        // XOR，防止重复拿之前拿过的点
         eBetas = secureBitsXORC1(eBetas, eAlphas, publicKey, reader, writer);
         System.out.println("XOR: " + timer.cut() + " ms");
 
@@ -2472,14 +2422,12 @@ public class Paillier {
             eAllPoints = new BigInteger[eBPoints.length][];
             System.arraycopy(eBPoints, 0, eAllPoints, 0, eBPoints.length);
         } else {
-            // 将之前SPE=1的桶的点与新点集混合
             eAllPoints = new BigInteger[eBPoints.length + eNPoints.length][];
             System.arraycopy(eBPoints, 0, eAllPoints, 0, eBPoints.length);
             System.arraycopy(eNPoints, 0, eAllPoints, eBPoints.length, eNPoints.length);
         }
         System.out.println("eAllPoints generate: " + timer.cut() + " ms");
 
-        // 计算这些点与点q的距离
         Util.writeInt(eAllPoints.length, writer);
         // BigInteger[] eAllDistances = new BigInteger[eAllPoints.length];
         // for (int i = 0; i < eAllDistances.length; i++) {
@@ -2521,33 +2469,27 @@ public class Paillier {
         // }
         secureMultiBitDecompositionC2(m + bNum * m * 2, dataLength, privateKey, reader, writer);
 
-        // 使用SPE计算桶是否包含点q
         // for (int i = 0; i < bNum; i++) {
         //     securePointEnclosureC2(m, dataLength, privateKey, reader, writer);
         // }
         securePointEnclosureSC2(bNum, m, dataLength, privateKey, reader, writer);
 
-        // secure read, 可能有多个桶包含点q
         secureReadC2(bNum, bSize, m, privateKey, reader, writer);
 
-        // 计算返回点与点q的距离
         int eBPointsLength = Util.readInt(reader);
         // for (int i = 0; i < eBPointsLength; i++) {
         //     enhancedSecureSquaredEuclideanDistanceC2(privateKey, m, sigma, reader, writer);
         // }
         enhancedSecureSquaredEuclideanDistanceSC2(privateKey, eBPointsLength, m, sigma, reader, writer);
 
-        // 获取第k小的distance，有可能桶中的点少于k？先不管了，假设桶的大小>k
         secureMinKthC2(k, eBPointsLength, disBitLength, privateKey, reader, writer);
         // mySecureMINKthC2(k, eBPointsLength, disBitLength, privateKey, reader, writer);
 
-        // 计算所有桶和q的distance
         // for (int i = 0; i < bNum; i++) {
         //     secureMinDistanceFromBoxToPointC2(m, dataLength, privateKey, reader, writer);
         // }
         secureMinDistanceFromBoxToPointSC2(bNum, m, dataLength, privateKey, reader, writer);
 
-        // 将所有distance与k th distance比较
         secureBitDecompositionC2(disBitLength, privateKey, reader, writer);
         secureMultiBitDecompositionC2(bNum, disBitLength, privateKey, reader, writer);
         // for (int i = 0; i < bNum; i++) {
@@ -2556,13 +2498,11 @@ public class Paillier {
         // }
         secureCompareSC2(bNum, disBitLength, privateKey, reader, writer);
 
-        // XOR，防止重复拿之前拿过的点
         secureBitsXORC2(bNum, privateKey, reader, writer);
 
         // SRead
         secureReadC2(bNum, bSize, m, privateKey, reader, writer);
 
-        // 计算这些点与点q的距离
         int eAllPointsLen = Util.readInt(reader);
         // for (int i = 0; i < eAllPointsLen; i++) {
         //     enhancedSecureSquaredEuclideanDistanceC2(privateKey, m, sigma, reader, writer);
@@ -2606,15 +2546,15 @@ public class Paillier {
         BigInteger c2 = Paillier.encrypt(publicKey, m2);
 
         System.out.println("m1 + m2 = " + m1.add(m2).mod(publicKey.n));
-        System.out.println("密文与明文：" + decrypt(privateKey, homomorphicAddition(c1, m2, publicKey)));
-        System.out.println("密文与密文：" + decrypt(privateKey, homomorphicAddition(c1, c2, publicKey.nSqure)));
+        System.out.println("pc：" + decrypt(privateKey, homomorphicAddition(c1, m2, publicKey)));
+        System.out.println("cc：" + decrypt(privateKey, homomorphicAddition(c1, c2, publicKey.nSqure)));
 
         System.out.println("m1 - m2 = " + m1.subtract(m2).mod(publicKey.n));
-        System.out.println("密文与明文：" + decrypt(privateKey, homomorphicSubstraction(c1, m2, publicKey)));
-        System.out.println("密文与密文：" + decrypt(privateKey, homomorphicSubstraction(c1, c2, publicKey.nSqure)));
+        System.out.println("cp：" + decrypt(privateKey, homomorphicSubstraction(c1, m2, publicKey)));
+        System.out.println("cc：" + decrypt(privateKey, homomorphicSubstraction(c1, c2, publicKey.nSqure)));
 
         System.out.println("m1 * m2 = " + m1.multiply(m2).mod(publicKey.n));
-        System.out.println("密文与明文：" + decrypt(privateKey, homomorphicMultiplication(c1, m2, publicKey.nSqure)));
+        System.out.println("cp：" + decrypt(privateKey, homomorphicMultiplication(c1, m2, publicKey.nSqure)));
 
         System.out.println("m1 * (-1) = " + m1.multiply(BigInteger.ONE.negate()).mod(publicKey.n));
         System.out.println("c1^{n-1} = " + decrypt(privateKey,

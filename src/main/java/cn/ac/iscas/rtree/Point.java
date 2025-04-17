@@ -4,48 +4,48 @@ import java.math.BigInteger;
 
 /**
  * @ClassName Point
- * @Description n维空间中的点，所有的维度被存储在一个BigInteger数组中
+ * @Description
  */
 public class Point implements Cloneable {
     private BigInteger[] data;
 
     // public Point(int[] data) {
     //     if (data == null) {
-    //         throw new IllegalArgumentException("Coordinates cannot be null."); // ★坐标不能为空
+    //         throw new IllegalArgumentException("Coordinates cannot be null.");
     //     }
     //     if (data.length < 2) {
-    //         throw new IllegalArgumentException("Point dimension should be greater than 1."); // ★点的维度必须大于1
+    //         throw new IllegalArgumentException("Point dimension should be greater than 1.");
     //     }
 
     //     this.data = new BigInteger[data.length];
     //     for (int i = 0; i < data.length; i++) {
-    //         this.data[i] = BigInteger.valueOf(data[i]); // 复制数组
+    //         this.data[i] = BigInteger.valueOf(data[i]);
     //     }
     // }
 
     public Point(BigInteger[] data) {
         if (data == null) {
-            throw new IllegalArgumentException("Coordinates cannot be null."); // ★坐标不能为空
+            throw new IllegalArgumentException("Coordinates cannot be null.");
         }
         if (data.length < 2) {
-            throw new IllegalArgumentException("Point dimension should be greater than 1."); // ★点的维度必须大于1
+            throw new IllegalArgumentException("Point dimension should be greater than 1.");
         }
 
         // this.data = new BigInteger[data.length];
         // for (int i = 0; i < data.length; i++) {
-        //     this.data[i] = data[i]; // 复制数组
+        //     this.data[i] = data[i];
         // }
         this.data = data.clone();
     }
 
-    @Override // 重写clone接口
+    @Override
     protected Object clone() {
         BigInteger[] copy = new BigInteger[data.length];
         System.arraycopy(data, 0, copy, 0, data.length);
         return new Point(copy);
     }
 
-    @Override // 重写tostring（）方法
+    @Override
     public String toString() {
         StringBuffer sBuffer = new StringBuffer("(");
 
@@ -53,7 +53,7 @@ public class Point implements Cloneable {
             sBuffer.append(data[i]).append(",");
         }
 
-        sBuffer.append(data[data.length - 1]).append(")"); // 最后一位数据后面不再添加逗号，追加放在循环外面
+        sBuffer.append(data[data.length - 1]).append(")");
 
         return sBuffer.toString();
     }
@@ -63,7 +63,7 @@ public class Point implements Cloneable {
     }
 
     /**
-     * @return 返回Point的维度
+     * @return
      */
     public int getDimension() {
         return data.length;
@@ -71,7 +71,7 @@ public class Point implements Cloneable {
 
     /**
      * @param index
-     * @return 返回Point坐标第i位
+     * @return
      */
     public BigInteger indexOf(int index) {
         return data[index];
@@ -79,11 +79,11 @@ public class Point implements Cloneable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Point) // 如果obj是point的实例
+        if (obj instanceof Point)
         {
             Point point = (Point) obj;
 
-            if (point.getDimension() != getDimension()) // 维度相同的点才能比较
+            if (point.getDimension() != getDimension())
                 throw new IllegalArgumentException("Points must be of equal dimensions to be compared.");
 
             for (int i = 0; i < getDimension(); i++) {

@@ -60,10 +60,10 @@ public class Test {
             new SecureRandom();
             timeSum += System.nanoTime() - timePre;
         }
-        System.out.println("new SecureRandom() 时间: " + timeSum / testNumber + " ns");
+        System.out.println("new SecureRandom() : " + timeSum / testNumber + " ns");
 
         BigInteger n = new BigInteger(1024, random);
-        System.out.println("n 长： " + n.bitLength());
+        System.out.println("n ： " + n.bitLength());
         timeSum = 0l;
         for (int i = 0; i < testNumber; i++) {
             long timePre = System.nanoTime();
@@ -74,7 +74,7 @@ public class Test {
             } while (r.compareTo(n) >= 0);
             timeSum += System.nanoTime() - timePre;
         }
-        System.out.println("Util.getRandomBigInteger(n) 时间: " + timeSum / testNumber + " ns");
+        System.out.println("Util.getRandomBigInteger(n) : " + timeSum / testNumber + " ns");
 
         timeSum = 0l;
         for (int i = 0; i < testNumber; i++) {
@@ -82,7 +82,7 @@ public class Test {
             new BigInteger(1024, random);
             timeSum += System.nanoTime() - timePre;
         }
-        System.out.println("new BigInteger(1024, random) 时间: " + timeSum / testNumber + " ns");
+        System.out.println("new BigInteger(1024, random) : " + timeSum / testNumber + " ns");
 
         timeSum = 0l;
         for (int i = 0; i < testNumber; i++) {
@@ -94,7 +94,7 @@ public class Test {
             } while (r.compareTo(n) >= 0);
             timeSum += System.nanoTime() - timePre;
         }
-        System.out.println("Util.getRandomBigInteger(n) 时间: " + timeSum / testNumber + " ns");
+        System.out.println("Util.getRandomBigInteger(n) : " + timeSum / testNumber + " ns");
 
         Paillier paillier = new Paillier(2048);
         PaillierPublicKey publicKey = paillier.getPaillierPublicKey();
@@ -107,7 +107,7 @@ public class Test {
             Paillier.encrypt(publicKey, x);
             timeSum += System.nanoTime() - timePre;
         }
-        System.out.println("2048bit Paillier.encrypt(publicKey, x); 时间: " + timeSum / testNumber + " ns");
+        System.out.println("2048bit Paillier.encrypt(publicKey, x); : " + timeSum / testNumber + " ns");
 
         timeSum = 0l;
         for (int i = 0; i < testNumber; i++) {
@@ -116,7 +116,7 @@ public class Test {
             Paillier.encrypt(privateKey, x);
             timeSum += System.nanoTime() - timePre;
         }
-        System.out.println("2048bit Paillier.encrypt(privateKey, x) 时间: " + timeSum / testNumber + " ns");
+        System.out.println("2048bit Paillier.encrypt(privateKey, x) : " + timeSum / testNumber + " ns");
 
         timeSum = 0l;
         for (int i = 0; i < testNumber; i++) {
@@ -126,7 +126,7 @@ public class Test {
             Paillier.decrypt(privateKey, ex);
             timeSum += System.nanoTime() - timePre;
         }
-        System.out.println("2048bit Paillier.decrypt(privateKey, ex) 时间: " + timeSum / testNumber + " ns");
+        System.out.println("2048bit Paillier.decrypt(privateKey, ex) : " + timeSum / testNumber + " ns");
     }
 
     public static void testOverflow() {

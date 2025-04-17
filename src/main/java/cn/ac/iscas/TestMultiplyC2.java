@@ -38,7 +38,7 @@ public class TestMultiplyC2 {
             int testNumber = Util.readInt(readerUser);
             System.out.println("testNumber=" + testNumber + ", mod=" + mod.toString());
 
-            Util.writeInt(1, writerUser);   // 提示User已收到，然后再开始传输数值
+            Util.writeInt(1, writerUser);
 
             // BigInteger x2 = Util.readBigInteger(readerUser);
             // BigInteger y2 = Util.readBigInteger(readerUser);

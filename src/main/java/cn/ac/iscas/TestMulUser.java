@@ -64,7 +64,7 @@ public class TestMulUser {
                 BigInteger z1 = Util.readBigInteger(readerC1);
                 BigInteger z2 = Util.readBigInteger(readerC2);
 
-                if (!z1.add(z2).mod(mod).equals(x.multiply(y).mod(mod))) { // 结果验证
+                if (!z1.add(z2).mod(mod).equals(x.multiply(y).mod(mod))) {
                     System.out.println("Error: z1 + z2 != x * y");
                 }
             }
