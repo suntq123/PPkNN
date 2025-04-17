@@ -64,7 +64,7 @@ public class TestSKNNV2 {
 
         int l = dataLength * 2 + (int) Util.log2(m) + 2;
         if (testType == 2) {
-            l = 45;
+            l = 27;
         }
         //int l = dataLength * 2 + (int) Util.log2(m) + 2 + (int) Util.log2(dataNumber);
 
