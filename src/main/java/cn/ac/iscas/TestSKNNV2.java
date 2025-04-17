@@ -600,9 +600,9 @@ public class TestSKNNV2 {
         int testType = 2; // 0-BPPkNN  2-VPPkNN
         int datasetType = 1; // 0-Synthetic dataset  1-Real world dataset
         int N = 1024; // dataset size
-        int dataLength = 12; // the bit length of numerical values
-        int dimension = 2; // dimension of data
-        int k = 5; // k in kNN
+        int dataLength = 12; // the bit length of values
+        int dimension = 2; // number of dimensions
+        int k = 5; // number of nearest neighbors
         String c1 = "c1 8001";
         String c2 = "c2 127.0.0.1 8001 8002";
         String user = "user 127.0.0.1 8001 127.0.0.1 8002 " // role ipC1 portC1 ipC2 portC2
