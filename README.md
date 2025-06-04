@@ -7,7 +7,7 @@ This repo is the code for the paper "Privacy-Preserving k-Nearest Neighbor Query
 ## Get Started
 For ease of testing, we have combined the code for the data user and the two servers into one project. The test requires three networked computers C1,  C2 and a client User.
 Before running the program, import the project into C1, C2 and User. All parameter configurations can be completed in the main function of /src/main/java/cn/ac/iscas/TestSKNNV2.java. 
-Note that the real datasets for N=1048576 (/PPkNN/src/main/dataset/gowalla/gowalla-1048576-0.zip, /PPkNN/src/main/dataset/syn/syn-1048576-0.zip) need to be decompressed.
+Note that the datasets for N=1048576 (/PPkNN/src/main/dataset/gowalla/gowalla-1048576-0.zip, /PPkNN/src/main/dataset/syn/syn-1048576-0.zip) need to be decompressed.
 * Parameter setting (For C1, C2 and User)
     * int testType = 2;               // 0-BPPkNN, 2-VPPkNN
     * int datasetType = 1;            // 0-Synthetic dataset, 1-Gowalla dataset
